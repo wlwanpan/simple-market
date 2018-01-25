@@ -1,23 +1,25 @@
-import Vue from 'Vue'
+import Vue from 'vue'
 import Vuex from 'Vuex'
-import {_} from 'underscore'
+var _ = require('underscore')
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
 
   state: {
-    coinbaseAddress: ''
+    coinbaseAddress: undefined
   },
+
   mutations: {
     setCoinbaseAddress (state, address) {
       state.coinbaseAddress = address
     }
   },
+
   actions: {
     initCoinbaseAddress (context) {
       window.web3.eth.getCoinbase(function (err, address) {
-        if (_(err).isNull()) return
+        if (!_(err).isNull()) return window.alert(err)
         context.commit('setCoinbaseAddress', address)
       })
     },
@@ -28,14 +30,10 @@ export default new Vuex.Store({
       //     App.contracts.ChainList.setProvider(App.web3Provider)
       //   })
     }
-  },
-  getters: {
-    getCoinbaseBalance: (state, getters) => {
-      window.web3.eth.getBalance(state.coinbaseAddress, (err, balance) => {
-        if (_(err).isNull()) return
-        return window.web3.fromWei(balance, 'ether')
-      })
-    }
-  }
 
+  },
+
+  getters: {
+    getCoinbaseBalance: (state) => () => state.coinbaseAddress
+  }
 })

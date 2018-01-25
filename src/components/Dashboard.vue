@@ -1,37 +1,46 @@
 <template>
   <div class="dashboard">
     <h1>{{ title }}</h1>
-    <div v-if="coinbaseAddressExist">
-      Welcome {{ pseudo }}. Destroy your account by clicking <a href="#" @click="destroyAccount">here</a>.
-    </div>
-    <div v-else>Sign up <router-link to="/sellItem">Sell an item</router-link>.</div>
+    Welcome to simple market.
+    <div>Your address is: {{ coinbaseAddress }}</div>
+    <a href="#" @click="getAccountBalance">Check Balance.</a>
+    <div>Click <router-link to="/sell-item">sell an item</router-link> to place a sell order.</div>
   </div>
 </template>
 
 <script>
+var _ = require('underscore')
 
 export default {
   name: 'dashboard',
   data () {
     return {
       title: 'Simple Market',
-      pseudo: undefined
+      coinbaseAddress: this.$store.state.coinbaseAddress
     }
   },
   computed: {
     coinbaseAddressExist: function () {
-
+      return _(this.coinbaseAddress).isUndefined()
     }
   },
   beforeCreate: function () {
     this.$store.dispatch('initCoinbaseAddress')
   },
   mounted: function () {
-
+    this.$store.watch(this.$store.getters.getCoinbaseBalance, (address) => {
+      this.coinbaseAddress = address
+    })
   },
   methods: {
-    destroyAccount: function (e) {
+    getAccountBalance: function (e) {
+      window.web3.eth.getBalance(this.coinbaseAddress, (err, balance) => {
+        if (err) console.log(err)
 
+        var balanceInEther = window.web3.fromWei(balance.toString(), 'ether')
+        console.log(balanceInEther)
+        return balanceInEther
+      })
     }
   }
 }

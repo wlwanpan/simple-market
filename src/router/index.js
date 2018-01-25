@@ -13,7 +13,7 @@ export default new Router({
       component: Dashboard
     },
     {
-      path: '/sellItem',
+      path: '/sell-item',
       name: 'sellItem',
       component: SellItem
     }

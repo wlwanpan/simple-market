@@ -25,7 +25,7 @@ module.exports = {
       '@': resolve('src'),
       '@config' : resolve('config'),
       '@contracts' : resolve('build/contracts')
-    },
+    }
   },
   module: {
     rules: [
