@@ -1,18 +1,28 @@
 <template>
   <section id='sell-item'>
-    <form>
+    <div class="back-btn">
+      <router-link to="/">Back</router-link>
+    </div>
+
+    <form @submit.prevent="sellItem">
+
       <div class="form-group">
         <label for="article_name">Article name</label>
-        <input type="text" class="form-control" id="article_name" placeholder="Enter the name of your article">
+        <input v-model="articleName" placeholder="Article Name">
       </div>
+
       <div class="form-group">
         <label for="price">Price in ETH</label>
-        <input type="number" class="form-control" id="article_price" placeholder="1" pattern="[0-9]+([\.,][0-9]+)?" step="0.01">
+        <input v-model.number="articlePrice" type="number" placeholder="Article Name">
       </div>
+
       <div class="form-group">
         <label for="description">Description</label>
-        <textarea type="text" class="form-control" id="article_description" placeholder="Describe your article" maxlength="255"></textarea>
+        <textarea v-model="articleDescription" placeholder="Article Description"></textarea>
       </div>
+
+      <button type="submit">SELL</button>
+
     </form>
   </section>
 </template>
@@ -20,20 +30,27 @@
 <script>
 export default {
   name: 'sellItem',
+
   data () {
     return {
-      form: {
-      }
+      articleName: '',
+      articlePrice: 0,
+      articleDescription: ''
     }
   },
+
   beforeCreate: function () {
     // Users.init()
   },
+
   mounted: function () {
     console.log('Sell item form mounted')
   },
-  methods: {
 
+  methods: {
+    sellItem: function (e) {
+      console.log(this)
+    }
   }
 }
 
@@ -41,5 +58,10 @@ export default {
 
 <style lang="scss" scoped>
 
+input, textarea {
+  margin: 10px;
+  padding: 5px;
+  width: 40%;
+}
 
 </style>

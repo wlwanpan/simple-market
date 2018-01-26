@@ -1,5 +1,6 @@
 var path = require('path')
 var utils = require('./utils')
+var webpack = require('webpack')
 var config = require('../config/webpack')
 var vueLoaderConfig = require('../config/vue-loader/vue-loader.conf')
 
@@ -18,6 +19,16 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
+  externals: {
+    jquery: 'jQuery'
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+        $: 'jquery',
+        'jQuery': 'jquery',
+        "window.jQuery": "jquery"
+    })
+  ],
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
