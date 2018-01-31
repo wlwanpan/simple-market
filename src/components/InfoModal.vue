@@ -3,9 +3,8 @@
 
   <div class="modal-background" v-show="popup" @click="close">
     <div class="modal-dialog" @click.stop>
-      <h1>
-        {{ title }}
-      </h1>
+
+      <h1>{{ title }}</h1>
       <div class="details">
         {{ details }}
       </div>
@@ -47,7 +46,7 @@ h1 {
   position: fixed; width: 100%; height: 100%; z-index: 999;
   top: 0; left: 0;
   background-color: rgba(0, 0, 0, .5);
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .modal-dialog {
@@ -62,11 +61,5 @@ h1 {
 }
 
 .fade-enter, .fade-leave-active { opacity: 0; }
-
-.fade-enter .modal-dialog,
-.fade-leave-active .modal-dialog {
-  // -webkit-transform: scale(1.1);
-  // transform: scale(1.1);
-}
 
 </style>

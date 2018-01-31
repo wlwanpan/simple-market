@@ -17,7 +17,7 @@
 
       <div class="form-group">
         <label for="price">Price in ETH</label>
-        <input v-model.number="formData.articlePrice" type="number" placeholder="Article Name">
+        <input v-model.number="formData.articlePrice" type="number">
       </div>
 
       <div class="form-group">
@@ -33,7 +33,6 @@
 
 <script>
 import InfoModal from '@/components/InfoModal'
-var _ = require('underscore')
 
 export default {
   name: 'sellItem',
@@ -42,6 +41,7 @@ export default {
     return {
       displayInfoModal: false,
       gasLimit: 500000, // setting gas limit -> dynamic to change
+      lastTransactionHash: '0x0',
       transactionHistory: {},
       formData: {
         articleDescription: '',
@@ -54,11 +54,8 @@ export default {
   computed: {
 
     lastTransaction: function () {
-      debugger
-      _(_(this.transactionHistory).last()).each((transaction) => {
-        debugger
-        return transaction
-      })
+      // var lastTransaction = this.transactionHistory[this.lastTransactionHash]
+      return {}
     }
 
   },
@@ -66,7 +63,7 @@ export default {
   methods: {
 
     sellItem: function (e) {
-      var seller = this.$store.getters.getCoinbaseBalance()
+      var seller = this.$store.getters.getCoinbaseAddress()
       var articleData = [
         this.formData.articleName,
         this.formData.articleDescription,
@@ -81,7 +78,8 @@ export default {
         return instance.sellArticle(...articleData)
       })
       .then((transaction) => {
-        this.resetFormData()
+        this.lastTransactionHash = transaction.tx
+
         this.$store.dispatch({
           type: 'saveTransactionData',
           transaction
@@ -89,6 +87,7 @@ export default {
         .then((transactionHistory) => {
           this.transactionHistory = transactionHistory
           this.displayInfoModal = true
+          this.resetFormData()
         })
       })
     },
@@ -113,9 +112,8 @@ export default {
 <style lang="scss" scoped>
 
 input, textarea {
-  margin: 10px;
-  padding: 5px;
   width: 40%;
+  margin: 10px; padding: 5px;
 }
 
 </style>

@@ -7,7 +7,7 @@ Vue.use(Vuex)
 var _ = require('underscore')
 
 const state = {
-  coinbaseAddress: 0x0,
+  coinbaseAddress: '0x0',
   contracts: {
     marketContract: null
   },
@@ -77,7 +77,7 @@ const actions = {
 }
 
 const getters = {
-  getCoinbaseBalance: (state) => () => state.coinbaseAddress,
+  getCoinbaseAddress: (state) => () => state.coinbaseAddress,
   getMarketContract: (state) => () => state.contracts.marketContract,
   getAvailableArticles: (state) => () => state.availableArticles
 }

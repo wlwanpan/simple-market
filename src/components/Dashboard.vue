@@ -1,9 +1,12 @@
 <template>
   <div class="dashboard">
 
-    <h1>{{ title }}</h1>
-    <div>Welcome to simple market.</div>
-    <div>Your address is: {{ coinbaseAddress }} with {{ myBalance }} ETH.</div><br>
+    <div class="simple-market-header">
+      <h1>{{ title }}</h1>
+      <div>Welcome to simple market.</div>
+    </div>
+
+    <div>Your address is: {{ shortCoinbaseAddress }} with {{ myBalance }} ETH.</div><br>
     <a href="#" @click="getAccountBalance">Update Balance.</a><br>
     <div>Click <router-link to="/sell-item">sell an item</router-link> to place a sell order.</div>
 
@@ -16,7 +19,6 @@
     </ul>
 
   </div>
-
 </template>
 
 <script>
@@ -28,23 +30,32 @@ export default {
   data () {
     return {
       title: 'Simple Market',
-      coinbaseAddress: this.$store.state.coinbaseAddress,
-      availableArticles: this.$store.state.availableArticles,
+      coinbaseAddress: this.$store.getters.getCoinbaseAddress(),
+      availableArticles: this.$store.getters.getAvailableArticles(),
       myBalance: 0
     }
   },
 
+  computed: {
+    shortCoinbaseAddress: function () {
+      return this.coinbaseAddress
+    }
+  },
+
   mounted () {
+    if (this.coinbaseAddress !== '0x0') {
+      this.getAccountBalance()
+    }
+
     _(this.$store.state.availableArticles).each((article) => {
       console.log(article)
     })
   },
 
   watch: {
-    '$store.state.coinbaseBalance': {
-      handler: function (address) {
-        this.coinbaseAddress = address
-      }
+    '$store.state.coinbaseAddress': (address) => {
+      this.coinbaseAddress = address
+      console.log(this.coinbaseAddress)
     },
     '$store.state.availableArticles': {
       deep: true,
@@ -67,7 +78,11 @@ export default {
     },
 
     loadAvailableArticles: function (e) {
-      return this.$store.dispatch('refreshAvailableArticles')
+      this.$store.dispatch('refreshAvailableArticles')
+      .then((results) => {
+        var test = this.$store.getters.getAvailableArticles()
+        console.log(test)
+      })
     }
 
   }
