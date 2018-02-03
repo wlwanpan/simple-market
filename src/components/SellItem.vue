@@ -12,17 +12,17 @@
 
       <div class="form-group">
         <label for="article_name">Article name</label>
-        <input v-model="formData.articleName" placeholder="Article Name">
+        <input v-model="formData.secretTitle" placeholder="Article Name">
       </div>
 
       <div class="form-group">
         <label for="price">Price in ETH</label>
-        <input v-model.number="formData.articlePrice" type="number">
+        <input v-model.number="formData.secretPrice" type="number">
       </div>
 
       <div class="form-group">
         <label for="description">Description</label>
-        <textarea v-model="formData.articleDescription" placeholder="Article Description"></textarea>
+        <textarea v-model="formData.secretMessage" placeholder="Article Description"></textarea>
       </div>
 
       <button type="submit">SELL</button>
@@ -41,55 +41,38 @@ export default {
     return {
       displayInfoModal: false,
       gasLimit: 500000, // setting gas limit -> dynamic to change
-      lastTransactionHash: '0x0',
-      transactionHistory: {},
+      lastTransaction: null,
       formData: {
-        articleDescription: '',
-        articleName: '',
-        articlePrice: 0
+        secretTitle: '',
+        secretPrice: 0
       }
     }
-  },
-
-  computed: {
-
-    lastTransaction: function () {
-      // var lastTransaction = this.transactionHistory[this.lastTransactionHash]
-      return {}
-    }
-
   },
 
   methods: {
 
     sellItem: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
-      var articleData = [
-        this.formData.articleName,
-        this.formData.articleDescription,
-        window.web3.toWei(this.formData.articlePrice, 'ether'),
+      var data = [
+        this.formData.secretTitle,
+        this.formData.secretMessage,
+        window.web3.toWei(this.formData.secretPrice, 'ether'),
         {
           from: seller,
           gas: this.gasLimit
         }
       ]
-      this.$store.dispatch('deployMarketContract')
-      .then((instance) => {
-        return instance.sellArticle(...articleData)
-      })
-      .then((transaction) => {
-        this.lastTransactionHash = transaction.tx
 
-        this.$store.dispatch({
-          type: 'saveTransactionData',
-          transaction
-        })
-        .then((transactionHistory) => {
-          this.transactionHistory = transactionHistory
-          this.displayInfoModal = true
-          this.resetFormData()
-        })
+      this.$store.getters.getMarketContractInstance().sellSecret(...data)
+      .then((transaction) => {
+        this.lastTransaction = transaction
       })
+      .then((secretKey) => {
+        console.log('Secret sold secret key: ' + secretKey)
+        // this.displayInfoModal = true
+        this.resetFormData()
+      })
+      .catch(err => console.log(err))
     },
 
     closeInfoModal: function () {
@@ -97,9 +80,9 @@ export default {
     },
 
     resetFormData: function () {
-      this.formData.articleName = ''
-      this.formData.articleDescription = ''
-      this.formData.articlePrice = 0
+      this.formData.secretTitle = ''
+      this.formData.secretMessage = ''
+      this.formData.secretPrice = 0
     }
 
   },

@@ -4,14 +4,13 @@ import TruffleContract from 'truffle-contract'
 import SimpleMarketContract from '@contracts/SimpleMarket.json'
 
 Vue.use(Vuex)
-var _ = require('underscore')
 
 const state = {
   coinbaseAddress: '0x0',
   contracts: {
-    marketContract: null
+    marketInstance: null
   },
-  availableArticles: {},
+  availableSecrets: {},
   transactionHistory: {}
 }
 
@@ -20,16 +19,9 @@ const mutations = {
   SET_COINBASE_ADDRESS (state, address) {
     state.coinbaseAddress = address
   },
-  SET_MARKET_CONTRACT (state, contract) {
-    state.contracts.marketContract = contract
-  },
-  SET_AVAILABLE_ARTICLES (state, article) {
-    var hashKey = window.web3.sha3(JSON.stringify(article))
-    if (_(state.availableArticles).has(hashKey)) return
-    state.availableArticles[hashKey] = article
-  },
-  SAVE_TRANSACTION (state, { tx, receipt }) {
-    state.transactionHistory[tx] = receipt
+
+  SET_MARKET_CONTRACT_INSTANCE (state, instance) {
+    state.contracts.marketInstance = instance
   }
 
 }
@@ -41,23 +33,18 @@ const actions = {
     return state.transactionHistory
   },
 
-  refreshAvailableArticles ({ dispatch, commit }) {
-    dispatch('deployMarketContract')
-    .then((instance) => {
-      return instance.getArticle.call()
-    })
-    .then((article) => {
-      var [seller, name, description, price] = article
-      if (seller === 0x0) return
-      commit('SET_AVAILABLE_ARTICLES', {seller, name, description, price})
-    })
-    .catch((err) => {
-      window.alert(err)
-    })
-  },
+  refreshAvailableSecrets ({ state, commit }) {
+    var instance = state.contracts.marketInstance
 
-  deployMarketContract ({ state }) {
-    return state.contracts.marketContract.deployed()
+    instance.getNumberOfSecrets.call()
+    .then((secretCount) => {
+      // var count = secretCount.toNumber()
+      instance.getSecretByIndex.call(new window.web3.BigNumber(0))
+      .then((result) => {
+        // continue here
+        debugger
+      })
+    })
   },
 
   initCoinbaseAddress ({ commit }) {
@@ -67,19 +54,19 @@ const actions = {
     })
   },
 
-  initMarketContract ({ commit }) {
+  initContractInstance ({ commit }, { address }) {
     var marketContract = TruffleContract(SimpleMarketContract)
-
     marketContract.setProvider(window.web3.currentProvider)
-    commit('SET_MARKET_CONTRACT', marketContract)
+
+    commit('SET_MARKET_CONTRACT_INSTANCE', marketContract.at(address))
   }
 
 }
 
 const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
-  getMarketContract: (state) => () => state.contracts.marketContract,
-  getAvailableArticles: (state) => () => state.availableArticles
+  getMarketContractInstance: (state) => () => state.contracts.marketInstance,
+  getAvailableSecrets: (state) => () => state.availableSecrets
 }
 
 export default new Vuex.Store({

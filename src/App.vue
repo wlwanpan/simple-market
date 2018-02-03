@@ -10,7 +10,7 @@ export default {
   name: 'app',
 
   mounted: function () {
-    this.$store.dispatch('initMarketContract')
+    this.$store.dispatch('initContractInstance', {address: '0xe2044c29bebac8419567e5f39de27103d40bf4f2'})
     this.$store.dispatch('initCoinbaseAddress')
   }
 

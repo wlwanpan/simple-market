@@ -3,18 +3,22 @@
 
     <div class="simple-market-header">
       <h1>{{ title }}</h1>
-      <div>Welcome to simple market.</div>
+      <div>Welcome to Simple Market.</div>
     </div>
 
-    <div>Your address is: {{ shortCoinbaseAddress }} with {{ myBalance }} ETH.</div><br>
+    <div>
+       Your address is: {{ coinbaseAddress }} with {{ myBalance }} ETH.
+   </div>
+
     <a href="#" @click="getAccountBalance">Update Balance.</a><br>
+
     <div>Click <router-link to="/sell-item">sell an item</router-link> to place a sell order.</div>
 
-    <a href="#" @click="loadAvailableArticles">Load Articles</a>
+    <a href="#" @click="loadAvailableSecrets">Load Secrets</a>
 
-    <ul id="article-list">
-      <li v-for="article in availableArticles">
-        {{ article.seller }} - {{ article.name }} - {{ article.price.toString() }}
+    <ul id="secret-list">
+      <li v-for="secret in availableSecrets">
+        {{ secret.title }} - {{ secret.price.toString() }}
       </li>
     </ul>
 
@@ -22,8 +26,6 @@
 </template>
 
 <script>
-var _ = require('underscore')
-
 export default {
   name: 'dashboard',
 
@@ -31,14 +33,8 @@ export default {
     return {
       title: 'Simple Market',
       coinbaseAddress: this.$store.getters.getCoinbaseAddress(),
-      availableArticles: this.$store.getters.getAvailableArticles(),
+      availableSecrets: this.$store.getters.getAvailableSecrets(),
       myBalance: 0
-    }
-  },
-
-  computed: {
-    shortCoinbaseAddress: function () {
-      return this.coinbaseAddress
     }
   },
 
@@ -46,20 +42,15 @@ export default {
     if (this.coinbaseAddress !== '0x0') {
       this.getAccountBalance()
     }
-
-    _(this.$store.state.availableArticles).each((article) => {
-      console.log(article)
-    })
   },
 
   watch: {
     '$store.state.coinbaseAddress': (address) => {
       this.coinbaseAddress = address
-      console.log(this.coinbaseAddress)
     },
-    '$store.state.availableArticles': {
+    '$store.state.availableSecrets': {
       deep: true,
-      handler: function (articles) {
+      handler: function (secrets) {
         debugger
       }
     }
@@ -77,12 +68,9 @@ export default {
       })
     },
 
-    loadAvailableArticles: function (e) {
-      this.$store.dispatch('refreshAvailableArticles')
-      .then((results) => {
-        var test = this.$store.getters.getAvailableArticles()
-        console.log(test)
-      })
+    loadAvailableSecrets: function (e) {
+      console.log('load available secrets')
+      this.$store.dispatch('refreshAvailableSecrets')
     }
 
   }
