@@ -25,7 +25,7 @@ contract SimpleMarket {
       create and store secret in contract
     */
 
-    var secretKey = hashSecret(_message);
+    var secretKey = keccak256(_message);
     /* if (storedSecrets[secretKey].owner == address(0x0)) return false; */
 
     storedSecrets[secretKey] = Secret(_title, _message, _price, 10, msg.sender);
@@ -63,6 +63,8 @@ contract SimpleMarket {
     /*
       Public getter: returns partial info about the secret indexed
     */
+    assert(_index < secretCount);
+
     var _key = secretKeys[_index];
     var secretToReturn = storedSecrets[_key];
 
@@ -74,13 +76,6 @@ contract SimpleMarket {
       Public getter: returns the size of storedSecrets Arr
     */
     return secretCount;
-  }
-
-  function hashSecret(string _message) public pure returns(bytes32) {
-    /*
-      Hash the message to serve as key for storedSecrets
-    */
-    return keccak256(_message);
   }
 
   function keyExist(bytes32 _key) public view returns(bool) {

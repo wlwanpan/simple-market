@@ -4,13 +4,14 @@ import TruffleContract from 'truffle-contract'
 import SimpleMarketContract from '@contracts/SimpleMarket.json'
 
 Vue.use(Vuex)
+var _ = require('underscore')
 
 const state = {
   coinbaseAddress: '0x0',
   contracts: {
     marketInstance: null
   },
-  availableSecrets: {},
+  secrets: {},
   transactionHistory: {}
 }
 
@@ -22,6 +23,20 @@ const mutations = {
 
   SET_MARKET_CONTRACT_INSTANCE (state, instance) {
     state.contracts.marketInstance = instance
+  },
+
+  UPDATE_SECRET_STORE (state, data) {
+    if (data.length === 0) return
+
+    _(data).each(
+      ([key, title, price]) => {
+        if (!_(state.secrets).has(key)) {
+          var oldSecrets = _(state.secrets).clone()
+          oldSecrets[key] = {title, price}
+          state.secrets = oldSecrets
+        }
+      }
+    )
   }
 
 }
@@ -33,16 +48,25 @@ const actions = {
     return state.transactionHistory
   },
 
-  refreshAvailableSecrets ({ state, commit }) {
+  refreshSecrets ({ state, commit }) {
     var instance = state.contracts.marketInstance
 
     instance.getNumberOfSecrets.call()
-    .then((secretCount) => {
-      // var count = secretCount.toNumber()
-      instance.getSecretByIndex.call(new window.web3.BigNumber(0))
-      .then((result) => {
-        // continue here
-        debugger
+    .then((count) => {
+      var promiseArr = []
+      _(_.range(count.toNumber())).each((index) => {
+        promiseArr.push(
+          new Promise(function (resolve, reject) {
+            instance.getSecretByIndex.call(window.web3.toBigNumber(index))
+            .then(data => {
+              resolve(data)
+            })
+          })
+        )
+      })
+
+      Promise.all(promiseArr).then(function (secrets) {
+        commit('UPDATE_SECRET_STORE', secrets)
       })
     })
   },
@@ -66,7 +90,7 @@ const actions = {
 const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
   getMarketContractInstance: (state) => () => state.contracts.marketInstance,
-  getAvailableSecrets: (state) => () => state.availableSecrets
+  getSecrets: (state) => () => state.secrets
 }
 
 export default new Vuex.Store({

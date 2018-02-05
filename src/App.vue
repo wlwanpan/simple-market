@@ -10,7 +10,7 @@ export default {
   name: 'app',
 
   mounted: function () {
-    this.$store.dispatch('initContractInstance', {address: '0xe2044c29bebac8419567e5f39de27103d40bf4f2'})
+    this.$store.dispatch('initContractInstance', {address: '0x9fd49320a5340bf9ea159aaf86675eb1d939fb7c'})
     this.$store.dispatch('initCoinbaseAddress')
   }
 
@@ -24,6 +24,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

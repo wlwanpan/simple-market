@@ -11,8 +11,8 @@
     <form @submit.prevent="sellItem">
 
       <div class="form-group">
-        <label for="article_name">Article name</label>
-        <input v-model="formData.secretTitle" placeholder="Article Name">
+        <label for="article_name">Secret Title</label>
+        <input v-model="formData.secretTitle" placeholder="Title">
       </div>
 
       <div class="form-group">
@@ -21,8 +21,8 @@
       </div>
 
       <div class="form-group">
-        <label for="description">Description</label>
-        <textarea v-model="formData.secretMessage" placeholder="Article Description"></textarea>
+        <label for="description">Secret</label>
+        <textarea v-model="formData.secretMessage" placeholder="Message..."></textarea>
       </div>
 
       <button type="submit">SELL</button>
