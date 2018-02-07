@@ -13,7 +13,6 @@ contract SimpleMarket {
   }
 
   bytes32[] secretKeys;
-  uint256 secretCount;
 
   /*
     Store -> key(hash _message) and value(struct Secret)
@@ -25,20 +24,19 @@ contract SimpleMarket {
       create and store secret in contract
     */
 
-    var secretKey = keccak256(_message);
-    /* if (storedSecrets[secretKey].owner == address(0x0)) return false; */
+    var key = keccak256(_message);
+    /* if (storedSecrets[key].owner == address(0x0)) return false; */
 
-    storedSecrets[secretKey] = Secret(_title, _message, _price, 10, msg.sender);
-    secretKeys.push(secretKey);
-    secretCount++;
+    storedSecrets[key] = Secret(_title, _message, _price, 10, msg.sender);
+    secretKeys.push(key);
 
-    return (secretKey);
+    return (key);
   }
 
-  function buyArticle(bytes32 _secretKey) payable public returns(string) {
+  function buyArticle(bytes32 _key) payable public returns(string) {
     /* To continue implementation | need to remove from array | add transaction transfer */
 
-    var secret = storedSecrets[_secretKey];
+    var secret = storedSecrets[_key];
 
     secret.owner = msg.sender;
     secret.rank--;
@@ -46,14 +44,14 @@ contract SimpleMarket {
     return (secret.title);
   }
 
-  function revealSecret(bytes32 _secretKey) public view returns(string message) {
+  function revealSecret(bytes32 _key) public view returns(string message) {
     /*
       if caller is owner of secret, returns message
     */
-    assert(keyExist(_secretKey));
+    assert(keyExist(_key));
 
     var callerAddress = msg.sender;
-    var secret = storedSecrets[_secretKey];
+    var secret = storedSecrets[_key];
 
     if (secret.owner == callerAddress) return (secret.message);
     return ("This secret isnt yours");
@@ -63,7 +61,7 @@ contract SimpleMarket {
     /*
       Public getter: returns partial info about the secret indexed
     */
-    assert(_index < secretCount);
+    assert(_index >= 0 && _index < secretKeys.length);
 
     var _key = secretKeys[_index];
     var secretToReturn = storedSecrets[_key];
@@ -75,14 +73,13 @@ contract SimpleMarket {
     /*
       Public getter: returns the size of storedSecrets Arr
     */
-    return secretCount;
+    return secretKeys.length;
   }
 
   function keyExist(bytes32 _key) public view returns(bool) {
     /*
       To change to private method -> check if hashed key already exist
     */
-
     for(uint256 i = 0; i < secretKeys.length; i++){
       if (secretKeys[i] == _key) return true;
     }

@@ -4,6 +4,7 @@
     <div class="secret-info">
       {{ title }} - {{ priceInETH }} ETH
     </div>
+
     <div class="secret-actions">
       <a href="#" @click="buySecret">Buy</a>
     </div>
@@ -17,7 +18,8 @@ export default {
 
   props: [
     'title',
-    'price'
+    'price',
+    'keyHash'
   ],
 
   computed: {
@@ -28,7 +30,22 @@ export default {
 
   methods: {
     buySecret: function (e) {
-      console.log('Buy called of: ' + this.title)
+      var seller = this.$store.getters.getCoinbaseAddress()
+      var data = [
+        this.keyHash,
+        {
+          from: seller,
+          gas: 500000
+        }
+      ]
+
+      this.$store.getters.getMarketContractInstance().buyArticle(...data)
+      .then(() => {
+        this.$store.dispatch('refreshOwnedSecrets')
+      })
+      .catch((err) => {
+        window.alert(err)
+      })
     }
   }
 }

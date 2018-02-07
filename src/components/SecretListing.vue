@@ -7,7 +7,7 @@
 
     <ul id="secret-list">
       <li v-for="secret in secrets">
-        <secret-item :title="secret.title" :price="secret.price">
+        <secret-item :title="secret.title" :price="secret.price" :keyHash="secret.key">
         </secret-item>
       </li>
     </ul>

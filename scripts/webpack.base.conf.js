@@ -20,13 +20,9 @@ module.exports = {
       : config.dev.assetsPublicPath
   },
   externals: {
-    jquery: 'jQuery'
   },
   plugins: [
     new webpack.ProvidePlugin({
-        $: 'jquery',
-        'jQuery': 'jquery',
-        "window.jQuery": "jquery"
     })
   ],
   resolve: {

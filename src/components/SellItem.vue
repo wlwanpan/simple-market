@@ -72,7 +72,7 @@ export default {
         // this.displayInfoModal = true
         this.resetFormData()
       })
-      .catch(err => console.log(err))
+      .catch(err => window.alert(err))
     },
 
     closeInfoModal: function () {

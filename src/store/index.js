@@ -48,6 +48,10 @@ const actions = {
     return state.transactionHistory
   },
 
+  refreshOwnedSecrets ({ commit }) {
+
+  },
+
   refreshSecrets ({ state, commit }) {
     var instance = state.contracts.marketInstance
 

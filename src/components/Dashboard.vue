@@ -41,14 +41,12 @@ export default {
   },
 
   mounted () {
-    if (this.coinbaseAddress !== '0x0') {
-      this.getAccountBalance()
-    }
   },
 
   watch: {
-    '$store.state.coinbaseAddress': (address) => {
+    '$store.state.coinbaseAddress': function (address) {
       this.coinbaseAddress = address
+      this.getAccountBalance()
     }
   },
 
