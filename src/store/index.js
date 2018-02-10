@@ -8,6 +8,7 @@ var _ = require('underscore')
 
 const state = {
   coinbaseAddress: '0x0',
+  coinbaseBalance: 0,
   contracts: {
     marketInstance: null
   },
@@ -19,6 +20,10 @@ const mutations = {
 
   SET_COINBASE_ADDRESS (state, address) {
     state.coinbaseAddress = address
+  },
+
+  SET_COINBASE_BALANCE (state, balance) {
+    state.coinbaseBalance = balance
   },
 
   SET_MARKET_CONTRACT_INSTANCE (state, instance) {
@@ -75,6 +80,10 @@ const actions = {
     })
   },
 
+  setCoinbaseBalance ({ commit }, { balance }) {
+    commit('SET_COINBASE_BALANCE', balance)
+  },
+
   initCoinbaseAddress ({ commit }) {
     window.web3.eth.getCoinbase(function (err, address) {
       if (err) window.alert(err)
@@ -93,6 +102,7 @@ const actions = {
 
 const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
+  getCoinbaseBalance: (state) => () => state.coinbaseBalance,
   getMarketContractInstance: (state) => () => state.contracts.marketInstance,
   getSecrets: (state) => () => state.secrets
 }

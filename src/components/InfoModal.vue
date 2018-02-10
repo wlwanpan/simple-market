@@ -5,11 +5,13 @@
     <div class="modal-dialog" @click.stop>
 
       <h1>{{ title }}</h1>
-      <div class="details">
-        {{ details }}
-      </div>
+      <ul class="details">
+        <li v-for="property in properties">
+          {{ property }}
+        </li>
+      </ul>
 
-      <button @click='close'>Close</button>
+      <button class="button" @click='close'>Close</button>
     </div>
   </div>
 
@@ -22,8 +24,8 @@ export default {
 
   props: [
     'popup',
-    'title',
-    'details'
+    'properties',
+    'title'
   ],
 
   methods: {

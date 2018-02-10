@@ -49,11 +49,9 @@ contract SimpleMarket {
       if caller is owner of secret, returns message
     */
     assert(keyExist(_key));
-
-    var callerAddress = msg.sender;
     var secret = storedSecrets[_key];
 
-    if (secret.owner == callerAddress) return (secret.message);
+    if (secret.owner == msg.sender) return (secret.message);
     return ("This secret isnt yours");
   }
 

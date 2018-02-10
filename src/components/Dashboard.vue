@@ -1,22 +1,20 @@
 <template>
   <div class="dashboard">
 
-    <div class="simple-market-header">
-      <h1>{{ title }}</h1>
-      <div>Welcome to Simple Market.</div>
+    <div class="general-actions action-stack">
+      <span class="left-action">
+        <a class="button" href="#" @click="getAccountBalance">Refresh Account</a>
+      </span>
+      <span class="right-action">
+        <router-link class="button" to="/sell-item">Sell Secret</router-link>
+      </span>
     </div>
 
     <div class="general-info">
-       Your address is: {{ coinbaseAddress }} with {{ myBalance }} ETH.
-    </div>
-
-    <div class="general-actions action-stack">
-      <span class="left-action">
-        <a class="action" href="#" @click="getAccountBalance">Refresh Account</a>
-      </span>
-      <span class="right-action">
-        <router-link class="action" to="/sell-item">Sell Secret</router-link>
-      </span>
+       <strong>Wallet Address:</strong> {{ coinbaseAddress }}
+      <div class="details">
+        <strong>Available Balance:</strong> {{ myBalance }} ETH.
+      </div>
     </div>
 
     <div class="secret-listing-wrapper">
@@ -34,19 +32,18 @@ export default {
 
   data () {
     return {
-      title: 'Simple Market',
       coinbaseAddress: this.$store.getters.getCoinbaseAddress(),
-      myBalance: 0
+      myBalance: this.$store.getters.getCoinbaseBalance()
     }
-  },
-
-  mounted () {
   },
 
   watch: {
     '$store.state.coinbaseAddress': function (address) {
       this.coinbaseAddress = address
       this.getAccountBalance()
+    },
+    '$store.state.coinbaseBalance': function (balance) {
+      this.myBalance = balance
     }
   },
 
@@ -54,11 +51,12 @@ export default {
 
     getAccountBalance: function (e) {
       window.web3.eth.getBalance(this.coinbaseAddress, (err, balance) => {
-        if (err) console.alert(err)
+        if (err) return (console.alert(err))
 
-        var balanceInEther = window.web3.fromWei(balance.toString(), 'ether')
-        this.myBalance = balanceInEther
-        return balanceInEther
+        this.$store.dispatch({
+          type: 'setCoinbaseBalance',
+          balance: window.web3.fromWei(balance.toString(), 'ether')
+        })
       })
     }
 
@@ -72,37 +70,23 @@ export default {
 
 <style lang="scss" scoped>
 
-h1 {
-  border-bottom: 1px solid #ddd;
-  padding: 15px;
-  margin: 15px 50px;
-  font-weight: 500;
-  display: block;
-}
-
 a {
   color: #42b983;
 }
 
 .general-info {
   padding: 15px;
+
+  .details {
+
+  }
 }
 
 .general-actions {
-  .action {
-    border: 1px solid; border-radius: 4px;
-    padding: 5px 15px; margin: 5px;
-    text-decoration: none;
-  }
-  .left-action {
-
-  }
-  .right-action {
-  }
+  margin: 15px;
 }
 
 .secret-listing-wrapper {
-  margin-top: 15px;
 }
 
 </style>

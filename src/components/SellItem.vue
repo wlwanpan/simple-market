@@ -1,31 +1,31 @@
 <template>
   <section id='sell-item'>
 
-    <div class="back-btn">
-      <router-link to="/">Back</router-link>
+    <div class="general-actions back-btn">
+      <router-link class="button" to="/">Back</router-link>
     </div>
 
-    <info-modal @close="closeInfoModal" :popup="displayInfoModal" :details="lastTransaction" title="Transaction Details">
+    <info-modal @close="closeInfoModal" :popup="displayInfoModal" :properties="lastTransaction" title="Transaction Info">
     </info-modal>
 
     <form @submit.prevent="sellItem">
 
       <div class="form-group">
-        <label for="article_name">Secret Title</label>
-        <input v-model="formData.secretTitle" placeholder="Title">
+        <div class="form-label">Title</div>
+        <input v-model="formData.secretTitle" placeholder="Enter a summary for your secret.">
       </div>
 
       <div class="form-group">
-        <label for="price">Price in ETH</label>
-        <input v-model.number="formData.secretPrice" type="number">
+        <div class="form-label">Price in ETH</div>
+        <input id="price" v-model.number="formData.secretPrice" type="number">
       </div>
 
       <div class="form-group">
-        <label for="description">Secret</label>
-        <textarea v-model="formData.secretMessage" placeholder="Message..."></textarea>
+        <div class="form-label">Secret</div>
+        <textarea maxlength="155" v-model="formData.secretMessage" placeholder="Secret message you want to auction"></textarea>
       </div>
 
-      <button type="submit">SELL</button>
+      <button class="button sell-btn" type="submit">SELL</button>
 
     </form>
   </section>
@@ -41,10 +41,14 @@ export default {
     return {
       displayInfoModal: false,
       gasLimit: 500000, // setting gas limit -> dynamic to change
-      lastTransaction: null,
+      lastTransaction: {
+        title: '',
+        gasUsed: 0
+
+      },
       formData: {
-        secretTitle: '',
-        secretPrice: 0
+        secretPrice: 0,
+        transactionHash: '0x0'
       }
     }
   },
@@ -65,11 +69,16 @@ export default {
 
       this.$store.getters.getMarketContractInstance().sellSecret(...data)
       .then((transaction) => {
-        this.lastTransaction = transaction
+        var tx = JSON.parse(JSON.stringify(transaction)) // find a better way
+        var processedTx = {
+          title: 'Transaction Info',
+          gasUsed: tx.receipt.gasUsed,
+          transactionHash: tx.receipt.transactionHash
+        }
+        this.lastTransaction = processedTx
       })
       .then((secretKey) => {
-        console.log('Secret sold secret key: ' + secretKey)
-        // this.displayInfoModal = true
+        this.displayInfoModal = true
         this.resetFormData()
       })
       .catch(err => window.alert(err))
@@ -94,9 +103,40 @@ export default {
 
 <style lang="scss" scoped>
 
+#sell-item {
+  width: 70%; margin: 0 auto;
+}
+
+.form-group {
+  padding: 10px;
+  .form-label {
+    width: 70%; margin: 0 auto;
+    font-size: 20px; font-weight: 400;
+    color: #42b983; text-align: left;
+  }
+}
+
+.sell-btn {
+  color: #42b983; width: 70%; font-size: 15px;
+}
+
 input, textarea {
-  width: 40%;
-  margin: 10px; padding: 5px;
+  margin: 5px; padding: 5px;
+  font-size: 15px; width: 70%;
+  resize: none; border: none;
+  border-bottom: 1px solid #ddd;
+  &:focus {
+    outline: none;
+    border-bottom: 1px solid #42b983;
+  }
+
+  &::-webkit-input-placeholder {
+    transition: opacity 0.4s;
+    opacity: 0.8;
+  }
+  &:focus::-webkit-input-placeholder {
+    opacity: 0.2;
+  }
 }
 
 </style>
