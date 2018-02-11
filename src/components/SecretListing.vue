@@ -6,9 +6,8 @@
     </div>
 
     <ul id="secret-list">
-      <li v-for="secret in secrets">
-        <secret-item :title="secret.title" :price="secret.price" :keyHash="secret.key">
-        </secret-item>
+      <li v-for="(secretData, secretKey) in secrets">
+        <secret-item :data="secretData" :secretKey="secretKey" @reveal="revealSecret(secretKey)"></secret-item>
       </li>
     </ul>
 
@@ -40,8 +39,25 @@ export default {
   },
 
   methods: {
+
     refreshSecretListing: function (e) {
       this.$store.dispatch('refreshSecrets')
+    },
+
+    revealSecret: function (key) {
+      this.$store.getters.getMarketContractInstance().revealSecret.call(key)
+      .then((message) => {
+        this.$store.dispatch(
+          'refreshModal',
+          {
+            title: 'Secret Reveal',
+            show: true,
+            data: {
+              secretMessage: message
+            }
+          }
+        )
+      })
     }
   },
 
@@ -53,9 +69,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-li {
-  list-style: none;
-}
 
 </style>

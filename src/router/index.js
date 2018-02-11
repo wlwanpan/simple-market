@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Dashboard from '@/components/Dashboard'
-import SellItem from '@/components/SellItem'
+import SellSecret from '@/components/SellSecret'
 
 Vue.use(Router)
 
@@ -13,9 +13,9 @@ export default new Router({
       component: Dashboard
     },
     {
-      path: '/sell-item',
-      name: 'sellItem',
-      component: SellItem
+      path: '/sell-secret',
+      name: 'sellSecret',
+      component: SellSecret
     }
   ]
 })

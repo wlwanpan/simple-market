@@ -6,7 +6,7 @@
         <a class="button" href="#" @click="getAccountBalance">Refresh Account</a>
       </span>
       <span class="right-action">
-        <router-link class="button" to="/sell-item">Sell Secret</router-link>
+        <router-link class="button" to="/sell-secret">Sell Secret</router-link>
       </span>
     </div>
 

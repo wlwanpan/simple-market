@@ -33,15 +33,18 @@ contract SimpleMarket {
     return (key);
   }
 
-  function buyArticle(bytes32 _key) payable public returns(string) {
-    /* To continue implementation | need to remove from array | add transaction transfer */
-
+  function buySecret(bytes32 _key) public payable {
+    /*
+      Transfer ownership from seller to buyer
+    */
     var secret = storedSecrets[_key];
+    require(msg.value >= secret.price);
 
-    secret.owner = msg.sender;
-    secret.rank--;
-
-    return (secret.title);
+    /* send returns a bool after transaction state | transfer raise error -> check best practice/ error handling */
+    if (secret.owner.send(msg.value)) {
+      secret.owner = msg.sender;
+      secret.rank--;
+    }
   }
 
   function revealSecret(bytes32 _key) public view returns(string message) {
@@ -55,7 +58,7 @@ contract SimpleMarket {
     return ("This secret isnt yours");
   }
 
-  function getSecretByIndex(uint256 _index) public view returns(bytes32 key, string title, uint256 price) {
+  function getSecretByIndex(uint256 _index) public view returns(bytes32 key, string title, uint256 price, uint256 rank, bool owned) {
     /*
       Public getter: returns partial info about the secret indexed
     */
@@ -64,7 +67,11 @@ contract SimpleMarket {
     var _key = secretKeys[_index];
     var secretToReturn = storedSecrets[_key];
 
-    return (_key, secretToReturn.title, secretToReturn.price);
+    if (secretToReturn.owner == msg.sender) {
+      owned = true;
+    }
+
+    return (_key, secretToReturn.title, secretToReturn.price, secretToReturn.rank, owned);
   }
 
   function getNumberOfSecrets() public view returns(uint256) {

@@ -7,6 +7,11 @@ Vue.use(Vuex)
 var _ = require('underscore')
 
 const state = {
+  modal: {
+    title: '',
+    show: false,
+    data: {}
+  },
   coinbaseAddress: '0x0',
   coinbaseBalance: 0,
   contracts: {
@@ -17,6 +22,10 @@ const state = {
 }
 
 const mutations = {
+
+  REFERSH_MODAL_DATA (state, modalData) {
+    state.modal = modalData
+  },
 
   SET_COINBASE_ADDRESS (state, address) {
     state.coinbaseAddress = address
@@ -34,10 +43,10 @@ const mutations = {
     if (data.length === 0) return
 
     _(data).each(
-      ([key, title, price]) => {
+      ([key, title, price, rank, owned]) => {
         if (!_(state.secrets).has(key)) {
           var oldSecrets = _(state.secrets).clone()
-          oldSecrets[key] = {title, price}
+          oldSecrets[key] = {title, price, rank, owned}
           state.secrets = oldSecrets
         }
       }
@@ -51,10 +60,6 @@ const actions = {
   saveTransactionData ({ state, commit }, { transaction }) {
     commit('SAVE_TRANSACTION', transaction)
     return state.transactionHistory
-  },
-
-  refreshOwnedSecrets ({ commit }) {
-
   },
 
   refreshSecrets ({ state, commit }) {
@@ -96,6 +101,10 @@ const actions = {
     marketContract.setProvider(window.web3.currentProvider)
 
     commit('SET_MARKET_CONTRACT_INSTANCE', marketContract.at(address))
+  },
+
+  refreshModal ({ commit }, modalData) {
+    commit('REFERSH_MODAL_DATA', modalData)
   }
 
 }
@@ -104,7 +113,8 @@ const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
   getCoinbaseBalance: (state) => () => state.coinbaseBalance,
   getMarketContractInstance: (state) => () => state.contracts.marketInstance,
-  getSecrets: (state) => () => state.secrets
+  getSecrets: (state) => () => state.secrets,
+  getModalData: (state) => () => state.modal
 }
 
 export default new Vuex.Store({

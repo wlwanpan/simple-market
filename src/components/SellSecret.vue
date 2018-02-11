@@ -1,12 +1,9 @@
 <template>
-  <section id='sell-item'>
+  <section id='sell-secret'>
 
     <div class="general-actions back-btn">
       <router-link class="button" to="/">Back</router-link>
     </div>
-
-    <info-modal @close="closeInfoModal" :popup="displayInfoModal" :properties="lastTransaction" title="Transaction Info">
-    </info-modal>
 
     <form @submit.prevent="sellItem">
 
@@ -28,26 +25,19 @@
       <button class="button sell-btn" type="submit">SELL</button>
 
     </form>
+
   </section>
 </template>
 
 <script>
-import InfoModal from '@/components/InfoModal'
-
 export default {
-  name: 'sellItem',
+  name: 'sellSecret',
 
   data () {
     return {
-      displayInfoModal: false,
       gasLimit: 500000, // setting gas limit -> dynamic to change
-      lastTransaction: {
-        title: '',
-        gasUsed: 0
-
-      },
       formData: {
-        secretPrice: 0,
+        secretPrice: window.web3.toBigNumber(0),
         transactionHash: '0x0'
       }
     }
@@ -57,6 +47,7 @@ export default {
 
     sellItem: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
+      // var seller = '0xea5a6266b8797709b68485d0dae3bc56c6a0f91d' // Another account to test seller
       var data = [
         this.formData.secretTitle,
         this.formData.secretMessage,
@@ -69,23 +60,26 @@ export default {
 
       this.$store.getters.getMarketContractInstance().sellSecret(...data)
       .then((transaction) => {
-        var tx = JSON.parse(JSON.stringify(transaction)) // find a better way
-        var processedTx = {
-          title: 'Transaction Info',
-          gasUsed: tx.receipt.gasUsed,
-          transactionHash: tx.receipt.transactionHash
-        }
-        this.lastTransaction = processedTx
+        var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
+
+        this.$store.dispatch(
+          'refreshModal',
+          {
+            title: 'Secret Auction Successful',
+            show: true,
+            data: {
+              gasUsed,
+              cumulativeGasUsed,
+              blockNumber,
+              transactionHash
+            }
+          }
+        )
       })
       .then((secretKey) => {
-        this.displayInfoModal = true
         this.resetFormData()
       })
       .catch(err => window.alert(err))
-    },
-
-    closeInfoModal: function () {
-      this.displayInfoModal = false
     },
 
     resetFormData: function () {
@@ -94,16 +88,13 @@ export default {
       this.formData.secretPrice = 0
     }
 
-  },
-  components: {
-    InfoModal
   }
 }
 </script>
 
 <style lang="scss" scoped>
 
-#sell-item {
+#sell-secret {
   width: 70%; margin: 0 auto;
 }
 

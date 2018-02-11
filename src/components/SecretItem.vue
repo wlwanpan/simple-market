@@ -2,11 +2,12 @@
   <div class="secret-item-wrapper">
 
     <div class="secret-info">
-      {{ title }} - {{ priceInETH }} ETH
+      Rank: {{ data.rank }} - {{ data.title }} - {{ priceInETH }} ETH
     </div>
 
     <div class="secret-actions">
-      <a href="#" @click="buySecret">Buy</a>
+      <a v-if="data.owned" href="#" @click="$emit('reveal')">Reveal</a>
+      <a v-else href="#" @click="buySecret">Buy</a>
     </div>
 
   </div>
@@ -17,14 +18,13 @@ export default {
   name: 'secret-item',
 
   props: [
-    'title',
-    'price',
-    'keyHash'
+    'data',
+    'secretKey'
   ],
 
   computed: {
     priceInETH: function () {
-      return window.web3.fromWei(this.price.toNumber(), 'ether')
+      return window.web3.fromWei(this.data.price.toNumber(), 'ether')
     }
   },
 
@@ -32,16 +32,35 @@ export default {
     buySecret: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
       var data = [
-        this.keyHash,
+        this.secretKey,
         {
           from: seller,
-          gas: 500000
+          gas: 500000,
+          value: this.data.price
         }
       ]
 
-      this.$store.getters.getMarketContractInstance().buyArticle(...data)
-      .then(() => {
-        this.$store.dispatch('refreshOwnedSecrets')
+      this.$store.getters.getMarketContractInstance().buySecret(...data)
+      .then((transaction) => {
+        var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
+        debugger
+
+        this.$store.dispatch(
+          'refreshModal',
+          {
+            title: 'Purchase Successful',
+            show: true,
+            data: {
+              gasUsed,
+              cumulativeGasUsed,
+              blockNumber,
+              transactionHash
+            }
+          }
+        )
+      })
+      .then((result) => {
+        debugger
       })
       .catch((err) => {
         window.alert(err)
