@@ -70,10 +70,6 @@ export default {
 
 <style lang="scss" scoped>
 
-a {
-  color: #42b983;
-}
-
 .general-info {
   padding: 15px;
 

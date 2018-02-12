@@ -26,6 +26,11 @@ export default {
     // Store Contract Instance Address in config file
     this.$store.dispatch('initContractInstance', {address: '0x2a76f74534790dd75e83d55a89b6f7d2e2df1989'})
     this.$store.dispatch('initCoinbaseAddress')
+
+    var marketInstance = this.$store.getters.getMarketContractInstance()
+    if (marketInstance) {
+      this.initMarketEventListeners(marketInstance)
+    }
   },
 
   methods: {
@@ -38,13 +43,33 @@ export default {
           data: {}
         }
       )
+    },
+
+    initMarketEventListeners: function (instance) {
+      instance.SecretAdded({}, {fromBlock: 0}).watch((err, result) => {
+        if (err) window.alert(err)
+
+        debugger
+      })
+
+      instance.SecretBought({}, {fromBlock: 0}).watch((err, result) => {
+        console.log(err)
+        console.log(result)
+      })
     }
+
   },
 
   watch: {
+
     '$store.state.modal': function (modalData) {
       this.modal = modalData
+    },
+
+    'store.state.contracts.marketInstance': function (instance) {
+      this.initMarketEventListeners(instance)
     }
+
   },
 
   components: {
@@ -96,6 +121,25 @@ export default {
 
     }
     .right-action {
+    }
+  }
+
+  input, textarea {
+    margin: 5px; padding: 5px;
+    font-size: 15px;
+    resize: none; border: none;
+    border-bottom: 1px solid #ddd;
+    &:focus {
+      outline: none;
+      border-bottom: 1px solid #42b983;
+    }
+
+    &::-webkit-input-placeholder {
+      transition: opacity 0.4s;
+      opacity: 0.8;
+    }
+    &:focus::-webkit-input-placeholder {
+      opacity: 0.2;
     }
   }
 }

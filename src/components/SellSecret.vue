@@ -112,22 +112,7 @@ export default {
 }
 
 input, textarea {
-  margin: 5px; padding: 5px;
-  font-size: 15px; width: 70%;
-  resize: none; border: none;
-  border-bottom: 1px solid #ddd;
-  &:focus {
-    outline: none;
-    border-bottom: 1px solid #42b983;
-  }
-
-  &::-webkit-input-placeholder {
-    transition: opacity 0.4s;
-    opacity: 0.8;
-  }
-  &:focus::-webkit-input-placeholder {
-    opacity: 0.2;
-  }
+  width: 70%;
 }
 
 </style>

@@ -19,7 +19,14 @@ contract SimpleMarket {
   */
   mapping(bytes32 => Secret) storedSecrets;
 
-  function sellSecret(string _title, string _message, uint256 _price) public returns(bytes32) {
+
+  /*
+    Action Events Declaration
+  */
+  event SecretBought(bytes32 key, uint256 rank, address owner);
+  event SecretAdded(bytes32 key, string title, uint256 price, uint256 rank, address owner);
+
+  function sellSecret(string _title, string _message, uint256 _price) public {
     /*
       create and store secret in contract
     */
@@ -30,7 +37,7 @@ contract SimpleMarket {
     storedSecrets[key] = Secret(_title, _message, _price, 10, msg.sender);
     secretKeys.push(key);
 
-    return (key);
+    SecretAdded(key, _title, _price, 10, msg.sender);
   }
 
   function buySecret(bytes32 _key) public payable {
@@ -44,6 +51,7 @@ contract SimpleMarket {
     if (secret.owner.send(msg.value)) {
       secret.owner = msg.sender;
       secret.rank--;
+      SecretBought(_key, secret.rank, secret.owner);
     }
   }
 
@@ -51,7 +59,7 @@ contract SimpleMarket {
     /*
       if caller is owner of secret, returns message
     */
-    assert(keyExist(_key));
+    require(keyExist(_key));
     var secret = storedSecrets[_key];
 
     if (secret.owner == msg.sender) return (secret.message);

@@ -62,13 +62,19 @@ const actions = {
     return state.transactionHistory
   },
 
-  refreshSecrets ({ state, commit }) {
+  loadSecrets ({ state, commit }) {
+    const PAGINATION_LIMIT = 10
     var instance = state.contracts.marketInstance
+    if (!instance) return
 
     instance.getNumberOfSecrets.call()
     .then((count) => {
       var promiseArr = []
-      _(_.range(count.toNumber())).each((index) => {
+      var totalSecretCount = count.toNumber()
+      var paginationFrom = _(state.secrets).keys().length
+      var paginationTo = totalSecretCount - paginationFrom > PAGINATION_LIMIT ? paginationFrom + 10 : totalSecretCount
+
+      _(_.range(paginationFrom, paginationTo)).each((index) => {
         promiseArr.push(
           new Promise(function (resolve, reject) {
             instance.getSecretByIndex.call(window.web3.toBigNumber(index))
@@ -85,6 +91,11 @@ const actions = {
     })
   },
 
+  refreshModal ({ commit }, modalData) {
+    commit('REFERSH_MODAL_DATA', modalData)
+  },
+
+  // Initialization Actions
   setCoinbaseBalance ({ commit }, { balance }) {
     commit('SET_COINBASE_BALANCE', balance)
   },
@@ -101,10 +112,6 @@ const actions = {
     marketContract.setProvider(window.web3.currentProvider)
 
     commit('SET_MARKET_CONTRACT_INSTANCE', marketContract.at(address))
-  },
-
-  refreshModal ({ commit }, modalData) {
-    commit('REFERSH_MODAL_DATA', modalData)
   }
 
 }
@@ -113,8 +120,7 @@ const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
   getCoinbaseBalance: (state) => () => state.coinbaseBalance,
   getMarketContractInstance: (state) => () => state.contracts.marketInstance,
-  getSecrets: (state) => () => state.secrets,
-  getModalData: (state) => () => state.modal
+  getSecrets: (state) => () => state.secrets
 }
 
 export default new Vuex.Store({

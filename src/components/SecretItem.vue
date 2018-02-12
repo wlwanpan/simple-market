@@ -43,7 +43,6 @@ export default {
       this.$store.getters.getMarketContractInstance().buySecret(...data)
       .then((transaction) => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
-        debugger
 
         this.$store.dispatch(
           'refreshModal',
@@ -58,9 +57,6 @@ export default {
             }
           }
         )
-      })
-      .then((result) => {
-        debugger
       })
       .catch((err) => {
         window.alert(err)
