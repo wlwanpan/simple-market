@@ -72,7 +72,7 @@ const actions = {
       var promiseArr = []
       var totalSecretCount = count.toNumber()
       var paginationFrom = _(state.secrets).keys().length
-      var paginationTo = totalSecretCount - paginationFrom > PAGINATION_LIMIT ? paginationFrom + 10 : totalSecretCount
+      var paginationTo = (totalSecretCount - paginationFrom) > PAGINATION_LIMIT ? (paginationFrom + PAGINATION_LIMIT) : totalSecretCount
 
       _(_.range(paginationFrom, paginationTo)).each((index) => {
         promiseArr.push(
