@@ -1,9 +1,13 @@
 <template>
   <section id='sell-secret'>
 
-    <div class="general-actions back-btn">
-      <router-link class="button" to="/">Back</router-link>
+    <div class="sell-secret-header">
+      Auction your secret message by filling up the form below. Once published,
+      the message will be immutable and live indefinetely on the network,
+      until it has been revealed at least 10 times.
     </div>
+
+    <router-link class="button back-btn" to="/">Back</router-link>
 
     <form @submit.prevent="sellItem">
 
@@ -47,7 +51,7 @@ export default {
 
     sellItem: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
-      // var seller = '0xea5a6266b8797709b68485d0dae3bc56c6a0f91d' // Another account to test seller
+      // var seller = '0x772d8a2ed99eb72c9a97ab70a82ccc9428bda795' // Another account to test seller
       var data = [
         this.formData.secretTitle,
         this.formData.secretMessage,
@@ -95,20 +99,34 @@ export default {
 <style lang="scss" scoped>
 
 #sell-secret {
-  width: 70%; margin: 0 auto;
+  width: 70%; max-width: 600px;
+  margin: 0 auto;
+}
+
+.sell-secret-header {
+  width: 70%; margin: 0 auto; padding: 15px;
+  margin-bottom: 15px;
+  background-color: rgba(15, 15, 15, 0.015);
+  border-radius: 5px;
 }
 
 .form-group {
   padding: 10px;
   .form-label {
-    width: 70%; margin: 0 auto;
-    font-size: 20px; font-weight: 400;
-    color: #42b983; text-align: left;
+    width: 70%; margin: 0 auto; text-align: left;
+    font-size: 20px; font-weight: 500;
+    opacity: 0.7;
   }
 }
 
+.back-btn {
+  display: inline-block; width: 62%; font-size: 15px;
+  margin-bottom: 15px; margin-top: 7px;
+}
+
 .sell-btn {
-  color: #42b983; width: 70%; font-size: 15px;
+  width: 70%; font-size: 15px;
+  margin-top: 15px;
 }
 
 input, textarea {

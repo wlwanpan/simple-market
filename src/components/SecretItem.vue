@@ -2,12 +2,14 @@
   <div class="secret-item-wrapper">
 
     <div class="secret-info">
-      Rank: {{ data.rank }} - {{ data.title }} - {{ priceInETH }} ETH
+      <div v-bind:class="rankClass" class="secret-rank"></div>
+      <span class="secret-title">{{ data.title || 'No Title' }}</span>
+      <span class="secret-price">| <strong>{{ priceInETH }}</strong> ETH</span>
     </div>
 
     <div class="secret-actions">
-      <a v-if="data.owned" href="#" @click="$emit('reveal')">Reveal</a>
-      <a v-else href="#" @click="buySecret">Buy</a>
+      <a v-if="data.owned" href="#" @click.prevent="$emit('reveal')">Reveal</a>
+      <a v-else href="#" @click.prevent="buySecret">Buy</a>
     </div>
 
   </div>
@@ -23,9 +25,21 @@ export default {
   ],
 
   computed: {
+
     priceInETH: function () {
       return window.web3.fromWei(this.data.price.toNumber(), 'ether')
+    },
+
+    rankClass: function () {
+      var _rank = this.data.rank.toNumber()
+
+      return {
+        'good': _rank >= 7,
+        'okay': _rank >= 4 && _rank < 7,
+        'bad': _rank < 4
+      }
     }
+
   },
 
   methods: {
@@ -69,8 +83,19 @@ export default {
 <style lang="scss" scoped>
 
 .secret-item-wrapper {
-  display: flex; justify-content: center;
+  display: flex; justify-content: space-between;
   padding: 10px;
+}
+
+.secret-rank {
+  display: inline-block; margin-right: 10px;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: #ddd;
+
+  &.good { background: #33cc99; }
+  &.okay { background: #434c4f; }
+  &.bad { background: #d61d4c; }
 }
 
 .secret-actions {

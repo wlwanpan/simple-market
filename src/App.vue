@@ -24,7 +24,7 @@ export default {
 
   mounted: function () {
     // Store Contract Instance Address in config file
-    this.$store.dispatch('initContractInstance', {address: '0x2a76f74534790dd75e83d55a89b6f7d2e2df1989'})
+    this.$store.dispatch('initContractInstance', {address: '0xc5e0b79622146cacf856ffcd793cabdbf048a120'})
     this.$store.dispatch('initCoinbaseAddress')
 
     var marketInstance = this.$store.getters.getMarketContractInstance()
@@ -46,16 +46,7 @@ export default {
     },
 
     initMarketEventListeners: function (instance) {
-      instance.SecretAdded({}, {fromBlock: 0}).watch((err, result) => {
-        if (err) window.alert(err)
-
-        debugger
-      })
-
-      instance.SecretBought({}, {fromBlock: 0}).watch((err, result) => {
-        console.log(err)
-        console.log(result)
-      })
+      // to fix event listeners from solidity
     }
 
   },
@@ -92,8 +83,15 @@ export default {
     border-bottom: 1px solid #ddd;
     padding: 15px;
     margin: 15px 15%;
-    font-weight: 500;
+    font-weight: bold;
     display: block;
+    opacity: 0.8;
+    font-size: 40px;
+  }
+
+  ul {
+    padding: 0;
+    list-style-type: none;
   }
 
   li {
@@ -101,37 +99,26 @@ export default {
   }
 
   .button {
-    border: 1px solid #42b983; border-radius: 4px;
-    padding: 5px 15px; margin: 5px; color: #42b983;
+    border: 1px solid #494e75; border-radius: 4px;
+    padding: 5px 15px; color: #494e75;
     text-decoration: none;
     transition: all 0.3;
-    &:focus {
-      outline: none;
-    }
-    &:hover {
-      background-color: #42b983; color: #fff;
-    }
-    &:active {
-      background-color: #fff; color: #42b983;
-    }
-  }
 
-  .general-actions {
-    .left-action {
-
-    }
-    .right-action {
-    }
+    &.left { border-radius: 0 5px 5px 0; }
+    &.right { border-radius: 5px 0 0 5px; }
+    &:focus { outline: none; }
+    &:hover { background-color: #494e75; color: #fff; }
+    &:active { background-color: #fff; color: #494e75; }
   }
 
   input, textarea {
-    margin: 5px; padding: 5px;
+    padding: 8px;
     font-size: 15px;
     resize: none; border: none;
     border-bottom: 1px solid #ddd;
     &:focus {
       outline: none;
-      border-bottom: 1px solid #42b983;
+      border-bottom: 1px solid #494e75;
     }
 
     &::-webkit-input-placeholder {

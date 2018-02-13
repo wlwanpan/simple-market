@@ -1,12 +1,17 @@
 <template>
   <div class="dashboard">
 
+    <div class="dashboard-header">
+      It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
+      and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+    </div>
+
     <div class="general-actions action-stack">
       <span class="left-action">
-        <a class="button" href="#" @click="getAccountBalance">Refresh Account</a>
+        <a class="button right" href="#" @click="getAccountBalance">Refresh Account</a>
       </span>
       <span class="right-action">
-        <router-link class="button" to="/sell-secret">Sell Secret</router-link>
+        <router-link class="button left" to="/sell-secret">Sell Secret</router-link>
       </span>
     </div>
 
@@ -70,6 +75,13 @@ export default {
 
 <style lang="scss" scoped>
 
+.dashboard-header {
+  width: 67%; margin: 0 auto; padding: 15px;
+  margin-bottom: 15px;
+  background-color: rgba(15, 15, 15, 0.015);
+  border-radius: 5px;
+}
+
 .general-info {
   padding: 15px;
 
@@ -79,7 +91,8 @@ export default {
 }
 
 .general-actions {
-  margin: 15px;
+  margin-bottom: 15px;
+  margin-top: 25px;
 }
 
 .secret-listing-wrapper {

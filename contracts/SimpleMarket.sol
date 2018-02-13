@@ -46,24 +46,26 @@ contract SimpleMarket {
     */
     var secret = storedSecrets[_key];
     require(msg.value >= secret.price);
+    require(msg.sender != secret.owner);
 
-    /* send returns a bool after transaction state | transfer raise error -> check best practice/ error handling */
-    if (secret.owner.send(msg.value)) {
-      secret.owner = msg.sender;
-      secret.rank--;
-      SecretBought(_key, secret.rank, secret.owner);
-    }
+    secret.owner.transfer(msg.value);
+    secret.owner = msg.sender;
+
+    SecretBought(_key, secret.rank, secret.owner);
   }
 
-  function revealSecret(bytes32 _key) public view returns(string message) {
+  function revealSecret(bytes32 _key) public returns(string message, uint256 rank) {
     /*
       if caller is owner of secret, returns message
     */
     require(keyExist(_key));
     var secret = storedSecrets[_key];
 
-    if (secret.owner == msg.sender) return (secret.message);
-    return ("This secret isnt yours");
+    if (secret.owner == msg.sender) {
+      secret.rank--;
+      return (secret.message, secret.rank);
+    }
+    return ("This secret isnt yours", 0);
   }
 
   function getSecretByIndex(uint256 _index) public view returns(bytes32 key, string title, uint256 price, uint256 rank, bool owned) {

@@ -3,10 +3,10 @@
 
     <div class="secret-listing-actions">
       <input class="search-field" v-model="searchText" placeholder="Search by secret title">
-      <span class="button" @click="toggleShowOwnedFilter">
+      <div class="button left" @click="toggleShowOwnedFilter">
         <span v-if="showOwnedFilterOn">Show All</span>
-        <span v-else>Only Owned</span>
-      </span>
+        <span v-else>Show Owned</span>
+      </div>
     </div>
 
     <ul id="secret-list">
@@ -16,7 +16,7 @@
     </ul>
 
     <div class="load-more">
-      <a href="#" @click="loadSecretListing">Load More</a>
+      <a href="#" @click.prevent="loadSecretListing">Load More</a>
     </div>
 
   </div>
@@ -80,7 +80,8 @@ export default {
 
     revealSecret: function (key) {
       this.$store.getters.getMarketContractInstance().revealSecret.call(key)
-      .then((message) => {
+      .then(([message, rank]) => {
+        console.log(rank.toNumber())
         this.$store.dispatch(
           'refreshModal',
           {
@@ -102,14 +103,41 @@ export default {
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 .search-field {
   width: 40%;
 }
 
+.button {
+  display: inline-block; width: 130px;
+}
+
+#secret-list > li {
+  width: 70%; max-width: 600px;
+  margin: 0 auto; margin-bottom: 10px;
+  background-color: rgba(15, 15, 15, 0.015);
+  border-radius: 5px; border: 1px solid transparent;
+
+  .secret-title, .secret-price {
+    opacity: 0.6;
+  }
+
+  &:hover {
+    background-color: white;
+    border-left: 1px solid #494e75; opacity: 1;
+    .secret-title, .secret-price {
+      opacity: 1;
+    }
+  }
+}
+
+.secret-listing-actions {
+  margin-bottom: 20px;
+}
+
 input, textarea {
-  width: 40%;
+  width: 40%; max-width: 400px;
 }
 
 </style>

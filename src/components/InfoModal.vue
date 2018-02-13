@@ -56,10 +56,10 @@ h1 {
   position: absolute;
   left: 50%;
   width: 600px;
-  margin-left: -300px; margin-top: 100px;
+  margin-left: -315px; margin-top: 100px;
   padding: 20px 15px;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
 }
 
