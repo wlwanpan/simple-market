@@ -1,0 +1,10 @@
+{
+  "name": "SimpleMarket",
+  "version": "0.0.1",
+  "description": "A simple market place to sell your secrets.",
+  "author": "wlwanpan <wlwanpan@protonmail.com>",
+  "private": true,
+  "scripts": {
+   "postinstall": "npm install express"
+  }
+}

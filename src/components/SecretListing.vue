@@ -3,7 +3,7 @@
 
     <div class="secret-listing-actions">
       <input class="search-field" v-model="searchText" placeholder="Search by secret title">
-      <div class="button left" @click="toggleShowOwnedFilter">
+      <div class="button left" @click.prevent="toggleShowOwnedFilter">
         <span v-if="showOwnedFilterOn">Show All</span>
         <span v-else>Show Owned</span>
       </div>

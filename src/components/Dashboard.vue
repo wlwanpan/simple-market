@@ -8,7 +8,7 @@
 
     <div class="general-actions action-stack">
       <span class="left-action">
-        <a class="button right" href="#" @click="getAccountBalance">Refresh Account</a>
+        <a class="button right" href="#" @click.prevent="getAccountBalance">Refresh Account</a>
       </span>
       <span class="right-action">
         <router-link class="button left" to="/sell-secret">Sell Secret</router-link>
@@ -76,7 +76,8 @@ export default {
 <style lang="scss" scoped>
 
 .dashboard-header {
-  width: 67%; margin: 0 auto; padding: 15px;
+  width: 67%; max-width: 600px;
+  margin: 0 auto; padding: 15px;
   margin-bottom: 15px;
   background-color: rgba(15, 15, 15, 0.015);
   border-radius: 5px;
