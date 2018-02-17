@@ -19,6 +19,12 @@
 export default {
   name: 'secret-item',
 
+  data () {
+    return {
+      secretState: 'available'
+    }
+  },
+
   props: [
     'data',
     'secretKey'
@@ -61,8 +67,11 @@ export default {
         this.$store.dispatch(
           'refreshModal',
           {
-            title: 'Purchase Successful',
-            show: true,
+            options: {
+              title: 'Purchase Successful',
+              show: true,
+              selectable: false
+            },
             data: {
               gasUsed,
               cumulativeGasUsed,
@@ -89,7 +98,7 @@ export default {
 
 .secret-rank {
   display: inline-block; margin-right: 10px;
-  width: 15px; height: 15px;
+  width: 15px; height: 15px; float: left;
   border-radius: 50%;
   background: #ddd;
 

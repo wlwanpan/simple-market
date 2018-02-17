@@ -1,11 +1,17 @@
 <template>
   <div id="app">
 
-    <info-modal @close="closeModal" :popup="modal.show" :properties="modal.data" :title="modal.title">
+    <info-modal @close="closeModal" :options="modal.options" :data="modal.data">
     </info-modal>
 
-    <h1 class="app-header"> Simple Market </h1>
-    <router-view></router-view>
+    <div class="app-wrapper">
+      <h1 class="app-header"> Simple Market </h1>
+      <router-view></router-view>
+    </div>
+
+    <div class="app-footer">
+      Contract Address: {{ contractAddress }}
+    </div>
 
   </div>
 </template>
@@ -18,14 +24,14 @@ export default {
 
   data () {
     return {
-      modal: this.$store.state.modal
+      modal: this.$store.state.modal,
+      contractAddress: '0x272b9827ecb6dab5c5acbf34047f01eabcf37c8b'
     }
   },
 
   mounted: function () {
     // Store Contract Instance Address in config file
-    this.$store.dispatch('initContractInstance', {address: '0xc5e0b79622146cacf856ffcd793cabdbf048a120'})
-    this.$store.dispatch('initCoinbaseAddress')
+    this.$store.dispatch('initContractInstance', {address: this.contractAddress})
 
     var marketInstance = this.$store.getters.getMarketContractInstance()
     if (marketInstance) {
@@ -38,8 +44,11 @@ export default {
       this.$store.dispatch(
         'refreshModal',
         {
-          title: '',
-          show: false,
+          options: {
+            title: '',
+            show: false,
+            selectable: false
+          },
           data: {}
         }
       )
@@ -76,8 +85,11 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: center; height: 100%;
   color: #2c3e50;
+
+  display: flex; flex-direction: column;
+  justify-content: space-between;
 
   .app-header {
     border-bottom: 1px solid #ddd;
@@ -87,6 +99,14 @@ export default {
     display: block;
     opacity: 0.8;
     font-size: 40px;
+  }
+
+  .app-wrapper {
+    width: 70%; margin: 0 auto;
+  }
+
+  .app-footer {
+    padding: 15px;
   }
 
   ul {
@@ -130,4 +150,6 @@ export default {
     }
   }
 }
+
+html, body { height: 100%; margin: 0px; }
 </style>

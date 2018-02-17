@@ -4,12 +4,14 @@ import TruffleContract from 'truffle-contract'
 import SimpleMarketContract from '@contracts/SimpleMarket.json'
 
 Vue.use(Vuex)
-var _ = require('underscore')
+const _ = require('underscore')
 
 const state = {
   modal: {
-    title: '',
-    show: false,
+    options: {
+      show: false,
+      title: ''
+    },
     data: {}
   },
   coinbaseAddress: '0x0',
@@ -100,7 +102,11 @@ const actions = {
     commit('SET_COINBASE_BALANCE', balance)
   },
 
-  initCoinbaseAddress ({ commit }) {
+  initCoinbaseAddress ({ commit }, { address }) {
+    if (typeof address === 'string') {
+      return commit('SET_COINBASE_ADDRESS', address)
+    }
+
     window.web3.eth.getCoinbase(function (err, address) {
       if (err) window.alert(err)
       commit('SET_COINBASE_ADDRESS', address)

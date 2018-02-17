@@ -24,7 +24,7 @@
 
 <script>
 import SecretItem from '@/components/SecretItem'
-var _ = require('underscore')
+const _ = require('underscore')
 
 export default {
   name: 'secret-listing',
@@ -85,8 +85,11 @@ export default {
         this.$store.dispatch(
           'refreshModal',
           {
-            title: 'Secret Reveal',
-            show: true,
+            options: {
+              title: 'Secret Reveal',
+              show: true,
+              selectable: false
+            },
             data: {
               secretMessage: message
             }

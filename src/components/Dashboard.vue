@@ -8,7 +8,7 @@
 
     <div class="general-actions action-stack">
       <span class="left-action">
-        <a class="button right" href="#" @click.prevent="getAccountBalance">Refresh Account</a>
+        <a class="button right" @click.prevent="changeCoinbaseAddress">Change Account</a>
       </span>
       <span class="right-action">
         <router-link class="button left" to="/sell-secret">Sell Secret</router-link>
@@ -31,6 +31,7 @@
 
 <script>
 import SecretListing from '@/components/SecretListing'
+const _ = require('underscore')
 
 export default {
   name: 'dashboard',
@@ -54,9 +55,34 @@ export default {
 
   methods: {
 
+    // implement change account for
+    changeCoinbaseAddress: function (e) {
+      window.web3.eth.getAccounts((err, result) => {
+        if (err) console.alert(err)
+
+        this.$store.dispatch(
+          'refreshModal',
+          {
+            options: {
+              title: 'Select Account',
+              show: true,
+              selectable: true,
+              callback: this.changeAddress
+            },
+            data: _(result).object(result)
+          }
+        )
+      })
+    },
+
+    changeAddress: function (address) {
+      this.$store.dispatch('initCoinbaseAddress', { address })
+      this.$store.dispatch('loadSecrets')
+    },
+
     getAccountBalance: function (e) {
       window.web3.eth.getBalance(this.coinbaseAddress, (err, balance) => {
-        if (err) return (console.alert(err))
+        if (err) return console.alert(err)
 
         this.$store.dispatch({
           type: 'setCoinbaseBalance',

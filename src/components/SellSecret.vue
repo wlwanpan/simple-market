@@ -51,7 +51,6 @@ export default {
 
     sellItem: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
-      // var seller = '0x772d8a2ed99eb72c9a97ab70a82ccc9428bda795' // Another account to test seller
       var data = [
         this.formData.secretTitle,
         this.formData.secretMessage,
@@ -69,8 +68,11 @@ export default {
         this.$store.dispatch(
           'refreshModal',
           {
-            title: 'Secret Auction Successful',
-            show: true,
+            options: {
+              title: 'Secret Auction Successful',
+              show: true,
+              selectable: false
+            },
             data: {
               gasUsed,
               cumulativeGasUsed,
@@ -104,7 +106,7 @@ export default {
 }
 
 .sell-secret-header {
-  width: 70%; margin: 0 auto; padding: 15px;
+  margin: 0 auto; padding: 15px;
   margin-bottom: 15px;
   background-color: rgba(15, 15, 15, 0.015);
   border-radius: 5px;

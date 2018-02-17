@@ -1,19 +1,17 @@
 <template>
 <transition name="fade">
 
-  <div class="modal-background" v-show="popup" @click="$emit('close')">
+  <div class="modal-background" v-show="options.show" @click="close">
     <div class="modal-dialog" @click.stop>
 
-      <h1>{{ title }}</h1>
+      <h1>{{ options.title }}</h1>
       <ul class="details">
-        <li v-for="(value, key) in properties">
-          <div class="property-item">
-            <strong>{{ key }}:</strong> {{ value }}
-          </div>
+        <li v-for="(value, key) in data">
+          <modal-item @selected="itemSelected(key)" :selectable="options.selectable" :itemValue="value" :itemKey="key"></modal-item>
         </li>
       </ul>
 
-      <button class="button close-btn" @click="$emit('close')">Close</button>
+      <button class="button close-btn" @click="close">Close</button>
     </div>
   </div>
 
@@ -21,14 +19,31 @@
 </template>
 
 <script>
+import ModalItem from '@/components/ModalItem'
+
 export default {
   name: 'info-modal',
 
   props: [
-    'popup',
-    'properties',
-    'title'
-  ]
+    'data',
+    'options'
+  ],
+
+  methods: {
+
+    itemSelected: function (key) {
+      this.options.callback(key)
+      this.close()
+    },
+
+    close: function () {
+      this.$emit('close')
+    }
+  },
+
+  components: {
+    ModalItem
+  }
 
 }
 </script>
@@ -39,10 +54,6 @@ h1 {
   border-bottom: 1px solid #ddd; opacity: 0.7;
   padding-bottom: 10px; padding-top: 0px;
   margin-top: 0;
-}
-
-.property-item {
-  padding-bottom: 10px;
 }
 
 .modal-background {
