@@ -19,11 +19,10 @@ contract SimpleMarket {
   */
   mapping(bytes32 => Secret) storedSecrets;
 
-
   /*
     Action Events Declaration
   */
-  event SecretBought(bytes32 key, uint256 rank, address owner);
+  event SecretBought(address indexed _buyer, bytes32 _key);
   event SecretAdded(bytes32 key, string title, uint256 price, uint256 rank, address owner);
 
   function sellSecret(string _title, string _message, uint256 _price) public {
@@ -51,7 +50,7 @@ contract SimpleMarket {
     secret.owner.transfer(msg.value);
     secret.owner = msg.sender;
 
-    SecretBought(_key, secret.rank, secret.owner);
+    SecretBought(secret.owner, _key);
   }
 
   function revealSecret(bytes32 _key) public returns(string message, uint256 rank) {
@@ -76,6 +75,7 @@ contract SimpleMarket {
 
     var _key = secretKeys[_index];
     var secretToReturn = storedSecrets[_key];
+    owned = false;
 
     if (secretToReturn.owner == msg.sender) {
       owned = true;

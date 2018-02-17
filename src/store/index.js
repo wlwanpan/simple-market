@@ -16,11 +16,7 @@ const state = {
   },
   coinbaseAddress: '0x0',
   coinbaseBalance: 0,
-  contracts: {
-    marketInstance: null
-  },
-  secrets: {},
-  transactionHistory: {}
+  secrets: {}
 }
 
 const mutations = {
@@ -37,10 +33,6 @@ const mutations = {
     state.coinbaseBalance = balance
   },
 
-  SET_MARKET_CONTRACT_INSTANCE (state, instance) {
-    state.contracts.marketInstance = instance
-  },
-
   UPDATE_SECRET_STORE (state, data) {
     if (data.length === 0) return
 
@@ -53,23 +45,21 @@ const mutations = {
         }
       }
     )
+  },
+
+  EMPTY_SECRET_STORE (state) {
+    state.secrets = {}
   }
 
 }
 
 const actions = {
 
-  saveTransactionData ({ state, commit }, { transaction }) {
-    commit('SAVE_TRANSACTION', transaction)
-    return state.transactionHistory
-  },
-
   loadSecrets ({ state, commit }) {
     const PAGINATION_LIMIT = 10
-    var instance = state.contracts.marketInstance
-    if (!instance) return
+    if (!window.instance) return
 
-    instance.getNumberOfSecrets.call()
+    window.instance.getNumberOfSecrets.call()
     .then((count) => {
       var promiseArr = []
       var totalSecretCount = count.toNumber()
@@ -79,7 +69,7 @@ const actions = {
       _(_.range(paginationFrom, paginationTo)).each((index) => {
         promiseArr.push(
           new Promise(function (resolve, reject) {
-            instance.getSecretByIndex.call(window.web3.toBigNumber(index))
+            window.instance.getSecretByIndex.call(window.web3.toBigNumber(index))
             .then(data => {
               resolve(data)
             })
@@ -93,6 +83,11 @@ const actions = {
     })
   },
 
+  refreshSecrets ({ dispatch, commit }) {
+    commit('EMPTY_SECRET_STORE')
+    dispatch('loadSecrets')
+  },
+
   refreshModal ({ commit }, modalData) {
     commit('REFERSH_MODAL_DATA', modalData)
   },
@@ -102,14 +97,19 @@ const actions = {
     commit('SET_COINBASE_BALANCE', balance)
   },
 
-  initCoinbaseAddress ({ commit }, { address }) {
-    if (typeof address === 'string') {
-      return commit('SET_COINBASE_ADDRESS', address)
-    }
+  refreshCoinbaseBalance ({ state, commit }) {
+    window.web3.eth.getBalance(state.coinbaseAddress, (err, balance) => {
+      if (err) return window.alert(err)
+      commit('SET_COINBASE_BALANCE', window.web3.fromWei(balance.toString(), 'ether'))
+    })
+  },
 
-    window.web3.eth.getCoinbase(function (err, address) {
+  refreshCoinbaseAddress ({ commit }) {
+    window.web3.eth.getAccounts((err, result) => {
       if (err) window.alert(err)
-      commit('SET_COINBASE_ADDRESS', address)
+
+      console.log('Logged in as:' + result)
+      commit('SET_COINBASE_ADDRESS', result[0])
     })
   },
 
@@ -117,7 +117,8 @@ const actions = {
     var marketContract = TruffleContract(SimpleMarketContract)
     marketContract.setProvider(window.web3.currentProvider)
 
-    commit('SET_MARKET_CONTRACT_INSTANCE', marketContract.at(address))
+    // OMG This is so dump =>  cannot store truffle contract instances to vuex store
+    window.instance = marketContract.at(address)
   }
 
 }
@@ -125,7 +126,6 @@ const actions = {
 const getters = {
   getCoinbaseAddress: (state) => () => state.coinbaseAddress,
   getCoinbaseBalance: (state) => () => state.coinbaseBalance,
-  getMarketContractInstance: (state) => () => state.contracts.marketInstance,
   getSecrets: (state) => () => state.secrets
 }
 

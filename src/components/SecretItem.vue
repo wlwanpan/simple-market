@@ -60,7 +60,7 @@ export default {
         }
       ]
 
-      this.$store.getters.getMarketContractInstance().buySecret(...data)
+      window.instance.buySecret(...data)
       .then((transaction) => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
 

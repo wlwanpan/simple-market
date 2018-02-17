@@ -9,7 +9,7 @@
 
     <router-link class="button back-btn" to="/">Back</router-link>
 
-    <form @submit.prevent="sellItem">
+    <form @submit.prevent="validateFormInput">
 
       <div class="form-group">
         <div class="form-label">Title</div>
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+const _ = require('underscore')
+
 export default {
   name: 'sellSecret',
 
@@ -49,6 +51,29 @@ export default {
 
   methods: {
 
+    validateFormInput: function () {
+      var errors = {}
+
+      if (!this.formData.secretTitle) { errors.Title = 'Cannot be empty.' }
+      if (!this.formData.secretMessage) { errors.Message = 'Cannot be empty.' }
+
+      if (_(errors).isEmpty()) {
+        this.sellItem()
+      } else {
+        this.$store.dispatch(
+          'refreshModal',
+          {
+            options: {
+              title: 'Input Error',
+              show: true,
+              selectable: false
+            },
+            data: errors
+          }
+        )
+      }
+    },
+
     sellItem: function (e) {
       var seller = this.$store.getters.getCoinbaseAddress()
       var data = [
@@ -61,7 +86,7 @@ export default {
         }
       ]
 
-      this.$store.getters.getMarketContractInstance().sellSecret(...data)
+      window.instance.sellSecret(...data)
       .then((transaction) => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
 
@@ -89,8 +114,8 @@ export default {
     },
 
     resetFormData: function () {
-      this.formData.secretTitle = ''
-      this.formData.secretMessage = ''
+      this.formData.secretTitle = undefined
+      this.formData.secretMessage = undefined
       this.formData.secretPrice = 0
     }
 
@@ -101,7 +126,7 @@ export default {
 <style lang="scss" scoped>
 
 #sell-secret {
-  width: 70%; max-width: 600px;
+  max-width: 600px;
   margin: 0 auto;
 }
 

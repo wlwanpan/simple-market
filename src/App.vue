@@ -25,18 +25,14 @@ export default {
   data () {
     return {
       modal: this.$store.state.modal,
-      contractAddress: '0x272b9827ecb6dab5c5acbf34047f01eabcf37c8b'
+      contractAddress: '0xfb0a4e5bbc481ae30826742c325ac26442cf0253'
     }
   },
 
   mounted: function () {
     // Store Contract Instance Address in config file
     this.$store.dispatch('initContractInstance', {address: this.contractAddress})
-
-    var marketInstance = this.$store.getters.getMarketContractInstance()
-    if (marketInstance) {
-      this.initMarketEventListeners(marketInstance)
-    }
+    this.$store.dispatch('refreshCoinbaseAddress')
   },
 
   methods: {
@@ -52,10 +48,6 @@ export default {
           data: {}
         }
       )
-    },
-
-    initMarketEventListeners: function (instance) {
-      // to fix event listeners from solidity
     }
 
   },
@@ -64,10 +56,6 @@ export default {
 
     '$store.state.modal': function (modalData) {
       this.modal = modalData
-    },
-
-    'store.state.contracts.marketInstance': function (instance) {
-      this.initMarketEventListeners(instance)
     }
 
   },

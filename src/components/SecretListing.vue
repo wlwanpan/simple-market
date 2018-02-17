@@ -58,7 +58,7 @@ export default {
 
   watch: {
 
-    '$store.state.contracts.marketInstance': function () {
+    '$store.state.coinbaseAddress': function () {
       this.$store.dispatch('loadSecrets')
     },
 
@@ -79,7 +79,7 @@ export default {
     },
 
     revealSecret: function (key) {
-      this.$store.getters.getMarketContractInstance().revealSecret.call(key)
+      window.instance.revealSecret.call(key)
       .then(([message, rank]) => {
         console.log(rank.toNumber())
         this.$store.dispatch(

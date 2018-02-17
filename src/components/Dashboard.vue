@@ -8,7 +8,7 @@
 
     <div class="general-actions action-stack">
       <span class="left-action">
-        <a class="button right" @click.prevent="changeCoinbaseAddress">Change Account</a>
+        <a class="button right" @click.prevent="refreshCoinbaseAddress">Refresh Account</a>
       </span>
       <span class="right-action">
         <router-link class="button left" to="/sell-secret">Sell Secret</router-link>
@@ -31,7 +31,6 @@
 
 <script>
 import SecretListing from '@/components/SecretListing'
-const _ = require('underscore')
 
 export default {
   name: 'dashboard',
@@ -44,51 +43,23 @@ export default {
   },
 
   watch: {
+
     '$store.state.coinbaseAddress': function (address) {
       this.coinbaseAddress = address
-      this.getAccountBalance()
+      this.$store.dispatch('refreshCoinbaseBalance')
+      this.$store.dispatch('refreshSecrets')
     },
+
     '$store.state.coinbaseBalance': function (balance) {
       this.myBalance = balance
     }
+
   },
 
   methods: {
 
-    // implement change account for
-    changeCoinbaseAddress: function (e) {
-      window.web3.eth.getAccounts((err, result) => {
-        if (err) console.alert(err)
-
-        this.$store.dispatch(
-          'refreshModal',
-          {
-            options: {
-              title: 'Select Account',
-              show: true,
-              selectable: true,
-              callback: this.changeAddress
-            },
-            data: _(result).object(result)
-          }
-        )
-      })
-    },
-
-    changeAddress: function (address) {
-      this.$store.dispatch('initCoinbaseAddress', { address })
-      this.$store.dispatch('loadSecrets')
-    },
-
-    getAccountBalance: function (e) {
-      window.web3.eth.getBalance(this.coinbaseAddress, (err, balance) => {
-        if (err) return console.alert(err)
-
-        this.$store.dispatch({
-          type: 'setCoinbaseBalance',
-          balance: window.web3.fromWei(balance.toString(), 'ether')
-        })
-      })
+    refreshCoinbaseAddress: function (e) {
+      this.$store.dispatch('refreshCoinbaseAddress')
     }
 
   },
@@ -102,7 +73,7 @@ export default {
 <style lang="scss" scoped>
 
 .dashboard-header {
-  width: 67%; max-width: 600px;
+  max-width: 600px;
   margin: 0 auto; padding: 15px;
   margin-bottom: 15px;
   background-color: rgba(15, 15, 15, 0.015);
