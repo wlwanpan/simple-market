@@ -22,8 +22,8 @@ contract SimpleMarket {
   /*
     Action Events Declaration
   */
-  event SecretBought(address indexed _buyer, bytes32 _key);
-  event SecretAdded(bytes32 key, string title, uint256 price, uint256 rank, address owner);
+  event SecretBoughtEvent(address indexed _buyer, bytes32 _key);
+  event SecretAddedEvent(bytes32 key, string title, uint256 price, uint256 rank, address owner);
 
   function sellSecret(string _title, string _message, uint256 _price) public {
     /*
@@ -36,7 +36,7 @@ contract SimpleMarket {
     storedSecrets[key] = Secret(_title, _message, _price, 10, msg.sender);
     secretKeys.push(key);
 
-    SecretAdded(key, _title, _price, 10, msg.sender);
+    SecretAddedEvent(key, _title, _price, 10, msg.sender);
   }
 
   function buySecret(bytes32 _key) public payable {
@@ -50,7 +50,7 @@ contract SimpleMarket {
     secret.owner.transfer(msg.value);
     secret.owner = msg.sender;
 
-    SecretBought(secret.owner, _key);
+    SecretBoughtEvent(secret.owner, _key);
   }
 
   function revealSecret(bytes32 _key) public returns(string message, uint256 rank) {
@@ -67,21 +67,20 @@ contract SimpleMarket {
     return ("This secret isnt yours", 0);
   }
 
-  function getSecretByIndex(uint256 _index) public view returns(bytes32 key, string title, uint256 price, uint256 rank, bool owned) {
+  function getSecretByIndex(uint256 _index) public view returns(bytes32 key, string title, uint256 price, uint256 rank, address owner) {
     /*
       Public getter: returns partial info about the secret indexed
     */
     assert(_index >= 0 && _index < secretKeys.length);
 
     var _key = secretKeys[_index];
-    var secretToReturn = storedSecrets[_key];
-    owned = false;
+    var secret = storedSecrets[_key];
 
-    if (secretToReturn.owner == msg.sender) {
+    /* if (secret.owner == msg.sender) {
       owned = true;
-    }
+    } */
 
-    return (_key, secretToReturn.title, secretToReturn.price, secretToReturn.rank, owned);
+    return (_key, secret.title, secret.price, secret.rank, secret.owner);
   }
 
   function getNumberOfSecrets() public view returns(uint256) {

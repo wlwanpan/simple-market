@@ -8,7 +8,7 @@
     </div>
 
     <div class="secret-actions">
-      <a v-if="data.owned" href="#" @click.prevent="$emit('reveal')">Reveal</a>
+      <a v-if="isOwner" href="#" @click.prevent="$emit('reveal')">Reveal</a>
       <a v-else href="#" @click.prevent="buySecret">Buy</a>
     </div>
 
@@ -31,6 +31,10 @@ export default {
   ],
 
   computed: {
+
+    isOwner: function () {
+      return (this.data.owner === this.$store.getters.getCoinbaseAddress())
+    },
 
     priceInETH: function () {
       return window.web3.fromWei(this.data.price.toNumber(), 'ether')
@@ -80,6 +84,12 @@ export default {
             }
           }
         )
+        return transaction.logs
+      })
+      .then((transactionLogs) => {
+        if (transactionLogs.length) {
+
+        }
       })
       .catch((err) => {
         window.alert(err)

@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'Vuex'
-import TruffleContract from 'truffle-contract'
-import SimpleMarketContract from '@contracts/SimpleMarket.json'
 
 Vue.use(Vuex)
 const _ = require('underscore')
@@ -37,10 +35,10 @@ const mutations = {
     if (data.length === 0) return
 
     _(data).each(
-      ([key, title, price, rank, owned]) => {
+      ([key, title, price, rank, owner]) => {
         if (!_(state.secrets).has(key)) {
           var oldSecrets = _(state.secrets).clone()
-          oldSecrets[key] = {title, price, rank, owned}
+          oldSecrets[key] = {title, price, rank, owner}
           state.secrets = oldSecrets
         }
       }
@@ -111,14 +109,6 @@ const actions = {
       console.log('Logged in as:' + result)
       commit('SET_COINBASE_ADDRESS', result[0])
     })
-  },
-
-  initContractInstance ({ commit }, { address }) {
-    var marketContract = TruffleContract(SimpleMarketContract)
-    marketContract.setProvider(window.web3.currentProvider)
-
-    // OMG This is so dump =>  cannot store truffle contract instances to vuex store
-    window.instance = marketContract.at(address)
   }
 
 }

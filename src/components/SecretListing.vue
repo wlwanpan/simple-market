@@ -79,9 +79,14 @@ export default {
     },
 
     revealSecret: function (key) {
-      window.instance.revealSecret.call(key)
+      window.instance.revealSecret.call(
+        key,
+        {
+          from: this.$store.getters.getCoinbaseAddress(),
+          gas: 500000
+        }
+      )
       .then(([message, rank]) => {
-        console.log(rank.toNumber())
         this.$store.dispatch(
           'refreshModal',
           {
