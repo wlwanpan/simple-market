@@ -7,6 +7,7 @@ https://simple-market.herokuapp.com
 - NodeJs (https://nodejs.org/en/)
 - testrpc (https://www.npmjs.com/package/ethereumjs-testrpc)
 - Geth (https://github.com/ethereum/go-ethereum/wiki/geth)
+- Metamask (https://metamask.io/)
 
 ## 
 
