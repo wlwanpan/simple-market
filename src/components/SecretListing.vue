@@ -9,7 +9,12 @@
       </div>
     </div>
 
-    <ul id="secret-list">
+    <div v-if="isFilteredSecretsEmpty">
+      <div class="placeholder">
+        No Secrets Available.
+      </div>
+    </div>
+    <ul v-else id="secret-list">
       <li v-for="(secretData, secretKey) in filteredSecrets">
         <secret-item :data="secretData" :secretKey="secretKey" @reveal="revealSecret(secretKey)"></secret-item>
       </li>
@@ -24,6 +29,7 @@
 
 <script>
 import SecretItem from '@/components/SecretItem'
+import { mapGetters } from 'vuex'
 const _ = require('underscore')
 
 export default {
@@ -31,24 +37,33 @@ export default {
 
   data () {
     return {
-      secrets: this.$store.getters.getSecrets(),
       showOwnedFilterOn: false,
       searchText: ''
     }
   },
 
   mounted () {
-    if (_(this.$store.getters.getSecrets()).isEmpty()) {
+    if (_(this.secrets).isEmpty()) {
       this.loadSecretListing()
     }
   },
 
   computed: {
 
+    ...mapGetters([
+      'secrets',
+      'coinbaseAddress',
+      'marketContract'
+    ]),
+
+    isFilteredSecretsEmpty: function () {
+      return _(this.filteredSecrets).isEmpty()
+    },
+
     filteredSecrets: function () {
       var regexp = new RegExp(this.searchText, 'g')
 
-      var filteredByOwner = this.showOwnedFilterOn ? _(this.secrets).filter(secret => secret.owned) : this.secrets
+      var filteredByOwner = this.showOwnedFilterOn ? _(this.secrets).filter(secret => secret.owner === this.coinbaseAddress) : this.secrets
       var filteredByRegex = this.searchText === '' ? filteredByOwner : _(filteredByOwner).filter(secret => regexp.test(secret.title))
 
       return filteredByRegex
@@ -60,10 +75,6 @@ export default {
 
     '$store.state.coinbaseAddress': function () {
       this.$store.dispatch('loadSecrets')
-    },
-
-    '$store.state.secrets': function (secrets) {
-      this.secrets = secrets
     }
 
   },
@@ -79,10 +90,10 @@ export default {
     },
 
     revealSecret: function (key) {
-      window.instance.revealSecret.call(
+      this.marketContract.revealSecret.call(
         key,
         {
-          from: this.$store.getters.getCoinbaseAddress(),
+          from: this.coinbaseAddress,
           gas: 500000
         }
       )
@@ -141,6 +152,10 @@ export default {
 }
 
 .secret-listing-actions {
+  margin-bottom: 20px;
+}
+
+.placeholder {
   margin-bottom: 20px;
 }
 

@@ -10,7 +10,7 @@
     </div>
 
     <div class="app-footer">
-      Contract Address: {{ contractAddress }}
+      <strong>Contract Address:</strong> {{ contractAddress }}
     </div>
 
   </div>
@@ -18,26 +18,27 @@
 
 <script>
 import InfoModal from '@/components/InfoModal'
-import TruffleContract from 'truffle-contract'
-import SimpleMarketContract from '@contracts/SimpleMarket.json'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'app',
 
   data () {
     return {
-      modal: this.$store.state.modal,
-      contractAddress: '0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35'
+      modal: this.$store.state.modal
     }
   },
 
-  mounted: function () {
-    // Store Contract Instance Address in config file
-    var marketContract = TruffleContract(SimpleMarketContract)
-    marketContract.setProvider(window.web3.currentProvider)
+  computed: {
+    ...mapGetters([
+      'coinbaseAddress',
+      'coinbaseBalance',
+      'contractAddress',
+      'marketContract'
+    ])
+  },
 
-    // OMG This is so dump =>  cannot store truffle contract instances to vuex store
-    window.instance = marketContract.at(this.contractAddress)
+  mounted: function () {
     this.initContactEventWatcher()
     this.$store.dispatch('refreshCoinbaseAddress')
   },
@@ -45,11 +46,11 @@ export default {
   methods: {
 
     initContactEventWatcher: function () {
-      window.web3.eth.getBlockNumber((err, blockHeight) => {
+      this.getBlockNumber((err, blockHeight) => {
         console.log(blockHeight)
         if (err) window.alert(err)
 
-        window.instance.SecretBoughtEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
+        this.marketContract.SecretBoughtEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
         .watch((err, result) => {
           if (err) window.alert(err)
 
@@ -57,7 +58,7 @@ export default {
           console.log(result.args)
         })
 
-        window.instance.SecretAddedEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
+        this.marketContract.SecretAddedEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
         .watch((err, result) => {
           if (err) window.alert(err)
           // var { key, title, price, rank, owned } = result.args

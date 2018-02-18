@@ -35,18 +35,27 @@
 
 <script>
 const _ = require('underscore')
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'sellSecret',
 
   data () {
     return {
-      gasLimit: 500000, // setting gas limit -> dynamic to change
       formData: {
-        secretPrice: window.web3.toBigNumber(0),
+        secretPrice: this.toBigNumber(0),
         transactionHash: '0x0'
       }
     }
+  },
+
+  computed: {
+
+    ...mapGetters([
+      'coinbaseAddress',
+      'marketContract'
+    ])
+
   },
 
   methods: {
@@ -58,7 +67,20 @@ export default {
       if (!this.formData.secretMessage) { errors.Message = 'Cannot be empty.' }
 
       if (_(errors).isEmpty()) {
-        this.sellItem()
+        this.$store.getters.computedGasLimit('default')
+        .then(
+          gasLimit => this.sellItem(
+            [
+              this.formData.secretTitle,
+              this.formData.secretMessage,
+              this.toWei(this.formData.secretPrice),
+              {
+                from: this.coinbaseAddress,
+                gas: gasLimit
+              }
+            ]
+          )
+        )
       } else {
         this.$store.dispatch(
           'refreshModal',
@@ -74,20 +96,9 @@ export default {
       }
     },
 
-    sellItem: function (e) {
-      var seller = this.$store.getters.getCoinbaseAddress()
-      var data = [
-        this.formData.secretTitle,
-        this.formData.secretMessage,
-        window.web3.toWei(this.formData.secretPrice, 'ether'),
-        {
-          from: seller,
-          gas: this.gasLimit
-        }
-      ]
-
-      window.instance.sellSecret(...data)
-      .then((transaction) => {
+    sellItem: function (transactionParams) {
+      this.marketContract.sellSecret(...transactionParams)
+      .then(transaction => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
 
         this.$store.dispatch(
@@ -107,10 +118,12 @@ export default {
           }
         )
       })
-      .then((secretKey) => {
-        this.resetFormData()
-      })
-      .catch(err => window.alert(err))
+      .then(
+        secretKey => this.resetFormData()
+      )
+      .catch(
+        err => window.alert(err)
+      )
     },
 
     resetFormData: function () {

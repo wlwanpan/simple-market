@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'secret-item',
 
@@ -32,12 +34,17 @@ export default {
 
   computed: {
 
+    ...mapGetters([
+      'coinbaseAddress',
+      'marketContract'
+    ]),
+
     isOwner: function () {
-      return (this.data.owner === this.$store.getters.getCoinbaseAddress())
+      return (this.data.owner === this.coinbaseAddress)
     },
 
     priceInETH: function () {
-      return window.web3.fromWei(this.data.price.toNumber(), 'ether')
+      return this.fromWei(this.data.price.toNumber())
     },
 
     rankClass: function () {
@@ -53,18 +60,25 @@ export default {
   },
 
   methods: {
-    buySecret: function (e) {
-      var seller = this.$store.getters.getCoinbaseAddress()
-      var data = [
-        this.secretKey,
-        {
-          from: seller,
-          gas: 500000,
-          value: this.data.price
-        }
-      ]
 
-      window.instance.buySecret(...data)
+    buySecret: function (e) {
+      this.$store.getters.computedGasLimit(this.data.price)
+      .then(
+        gasLimit => this.buySecretCallback(
+          [
+            this.secretKey,
+            {
+              from: this.coinbaseAddress,
+              gas: gasLimit,
+              value: this.data.price
+            }
+          ]
+        )
+      )
+    },
+
+    buySecretCallback: function (transactionParams) {
+      this.marketContract.buySecret(...transactionParams)
       .then((transaction) => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
 
@@ -88,7 +102,7 @@ export default {
       })
       .then((transactionLogs) => {
         if (transactionLogs.length) {
-
+          // Check for validity of secret and upate $store.
         }
       })
       .catch((err) => {

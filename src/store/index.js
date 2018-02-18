@@ -5,6 +5,7 @@ Vue.use(Vuex)
 const _ = require('underscore')
 
 const state = {
+  contractAddress: '0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35',
   modal: {
     options: {
       show: false,
@@ -53,11 +54,11 @@ const mutations = {
 
 const actions = {
 
-  loadSecrets ({ state, commit }) {
+  loadSecrets ({ getters, state, commit }) {
     const PAGINATION_LIMIT = 10
-    if (!window.instance) return
+    if (!getters.marketContract) return
 
-    window.instance.getNumberOfSecrets.call()
+    getters.marketContract.getNumberOfSecrets.call()
     .then((count) => {
       var promiseArr = []
       var totalSecretCount = count.toNumber()
@@ -67,7 +68,7 @@ const actions = {
       _(_.range(paginationFrom, paginationTo)).each((index) => {
         promiseArr.push(
           new Promise(function (resolve, reject) {
-            window.instance.getSecretByIndex.call(window.web3.toBigNumber(index))
+            getters.marketContract.getSecretByIndex.call(window.web3.toBigNumber(index))
             .then(data => {
               resolve(data)
             })
@@ -102,21 +103,65 @@ const actions = {
     })
   },
 
-  refreshCoinbaseAddress ({ commit }) {
+  refreshCoinbaseAddress ({ commit, dispatch }) {
     window.web3.eth.getAccounts((err, result) => {
       if (err) window.alert(err)
 
-      console.log('Logged in as:' + result)
-      commit('SET_COINBASE_ADDRESS', result[0])
+      if (result.length) {
+        console.log('Logged in as:' + result)
+        commit('SET_COINBASE_ADDRESS', result[0])
+      } else {
+        dispatch(
+          'refreshModal',
+          {
+            options: {
+              title: 'No Account detected',
+              show: true,
+              selectable: false
+            },
+            data: {
+              MetamaskError: 'Your account might be locked. Unlock it to proceed',
+              LocalNodeError: 'No local geth testrpc running on port: 8545'
+            }
+          }
+        )
+      }
     })
   }
 
 }
 
 const getters = {
-  getCoinbaseAddress: (state) => () => state.coinbaseAddress,
-  getCoinbaseBalance: (state) => () => state.coinbaseBalance,
-  getSecrets: (state) => () => state.secrets
+
+  contractAddress: state => state.contractAddress,
+
+  coinbaseAddress: state => state.coinbaseAddress,
+
+  coinbaseBalance: state => state.coinbaseBalance,
+
+  secrets: state => state.secrets,
+
+  marketContract: state => window.marketContract.at(state.contractAddress),
+
+  computedGasLimit: (state) => amountInWei => {
+    const defaultGasLimit = 500000
+
+    return new Promise((resolve, reject) => {
+      if (amountInWei === 'default') resolve(defaultGasLimit)
+
+      window.web3.eth.estimateGas(
+        {
+          from: state.coinbaseAddress,
+          to: state.contractAddress,
+          amount: amountInWei
+        },
+        (err, result) => {
+          if (err || !result) resolve(defaultGasLimit)
+          else resolve(result)
+        }
+      )
+    })
+  }
 }
 
 export default new Vuex.Store({

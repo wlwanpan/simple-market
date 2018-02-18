@@ -18,7 +18,7 @@
     <div class="general-info">
        <strong>Wallet Address:</strong> {{ coinbaseAddress }}
       <div class="details">
-        <strong>Available Balance:</strong> {{ myBalance }} ETH.
+        <strong>Available Balance:</strong> {{ coinbaseBalance }} ETH.
       </div>
     </div>
 
@@ -31,27 +31,23 @@
 
 <script>
 import SecretListing from '@/components/SecretListing'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'dashboard',
 
-  data () {
-    return {
-      coinbaseAddress: this.$store.getters.getCoinbaseAddress(),
-      myBalance: this.$store.getters.getCoinbaseBalance()
-    }
+  computed: {
+    ...mapGetters([
+      'coinbaseAddress',
+      'coinbaseBalance'
+    ])
   },
 
   watch: {
 
-    '$store.state.coinbaseAddress': function (address) {
-      this.coinbaseAddress = address
+    'coinbaseAddress': function (address) {
       this.$store.dispatch('refreshCoinbaseBalance')
       this.$store.dispatch('refreshSecrets')
-    },
-
-    '$store.state.coinbaseBalance': function (balance) {
-      this.myBalance = balance
     }
 
   },
