@@ -2,19 +2,32 @@
 
 Experimental Secret Market Dapp: https://simple-market.herokuapp.com
 
-The smart contract (address below) is currently deployed on the public ropsten testnet.
-Switch metamask from "Main Ethereum Network" to "Ropsten Test Net" and if you need some ETH to mess around, visit http://faucet.ropsten.be:3001/ and paste your metamask testnet account address to claim 3 ETH.
+The smart contract is currently deployed on the public ropsten testnet:
+https://ropsten.etherscan.io/address/0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35
+
+1. Install metamask extension - https://metamask.io/
+2. Switch metamask network from "Main Ethereum Network" to "Ropsten Test Net"
+3. Load testnet wallet by claiming ETH from: http://faucet.ropsten.be:3001/
 
 Note: Still figuring out a way host the dapp via IPFS instead of heroku.
 
-## Requirements to run locally:
+## Running locally:
 
 - NodeJs (https://nodejs.org/en/)
 - testrpc (https://www.npmjs.com/package/ethereumjs-testrpc)
 - Geth (https://github.com/ethereum/go-ethereum/wiki/geth)
-- Metamask (https://metamask.io/)
 
 ## 
+
+Clone repo:
+```
+git clone https://github.com/wlwanpan/simple-market.git
+```
+
+Install dependencies:
+```
+cd simple-market && npm install
+```
 
 Start geth testrpc:
 ```
