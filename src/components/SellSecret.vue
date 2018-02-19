@@ -53,7 +53,8 @@ export default {
 
     ...mapGetters([
       'coinbaseAddress',
-      'marketContract'
+      'marketContract',
+      'computedGasLimit'
     ])
 
   },
@@ -67,7 +68,7 @@ export default {
       if (!this.formData.secretMessage) { errors.Message = 'Cannot be empty.' }
 
       if (_(errors).isEmpty()) {
-        this.$store.getters.computedGasLimit('default')
+        this.computedGasLimit('default')
         .then(
           gasLimit => this.sellItem(
             [

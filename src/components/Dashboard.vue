@@ -2,8 +2,9 @@
   <div class="dashboard">
 
     <div class="dashboard-header">
-      It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-      and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+      Each secret auctioned can be traded indefinetely at selling price.
+      The latest buyer is able to reveal the secret and requires only the network gas price
+      to perform.
     </div>
 
     <div class="general-actions action-stack">

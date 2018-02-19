@@ -5,12 +5,14 @@
     </info-modal>
 
     <div class="app-wrapper">
-      <h1 class="app-header"> Simple Market </h1>
+      <h1 class="app-header"> Secret Market </h1>
       <router-view></router-view>
     </div>
 
     <div class="app-footer">
-      <strong>Contract Address:</strong> {{ contractAddress }}
+      <div class="contract-address-footer">
+        <strong>Contract Address:</strong> {{ contractAddress }}
+      </div>
     </div>
 
   </div>
@@ -127,7 +129,11 @@ export default {
   }
 
   .app-footer {
-    padding: 15px;
+    margin: 0 auto; width: 70%;
+    .contract-address-footer {
+      padding: 15px 15px 10px 15px; margin: 15px 15%;
+      border-top: 1px solid #ddd;
+    }
   }
 
   ul {

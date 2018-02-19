@@ -36,7 +36,8 @@ export default {
 
     ...mapGetters([
       'coinbaseAddress',
-      'marketContract'
+      'marketContract',
+      'computedGasLimit'
     ]),
 
     isOwner: function () {
@@ -62,7 +63,7 @@ export default {
   methods: {
 
     buySecret: function (e) {
-      this.$store.getters.computedGasLimit(this.data.price)
+      this.computedGasLimit(this.data.price)
       .then(
         gasLimit => this.buySecretCallback(
           [

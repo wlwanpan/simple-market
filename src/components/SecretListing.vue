@@ -53,7 +53,8 @@ export default {
     ...mapGetters([
       'secrets',
       'coinbaseAddress',
-      'marketContract'
+      'marketContract',
+      'computedGasLimit'
     ]),
 
     isFilteredSecretsEmpty: function () {
@@ -73,7 +74,7 @@ export default {
 
   watch: {
 
-    '$store.state.coinbaseAddress': function () {
+    'coinbaseAddress': function () {
       this.$store.dispatch('loadSecrets')
     }
 
@@ -90,13 +91,22 @@ export default {
     },
 
     revealSecret: function (key) {
-      this.marketContract.revealSecret.call(
-        key,
-        {
-          from: this.coinbaseAddress,
-          gas: 500000
-        }
+      this.computedGasLimit('default')
+      .then(
+        gasLimit => this.revealSecretCallback(
+          [
+            key,
+            {
+              from: this.coinbaseAddress,
+              gas: gasLimit
+            }
+          ]
+        )
       )
+    },
+
+    revealSecretCallback: function (transactionParams) {
+      this.marketContract.revealSecret.call(...transactionParams)
       .then(([message, rank]) => {
         this.$store.dispatch(
           'refreshModal',
