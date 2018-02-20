@@ -62,6 +62,7 @@ export default {
   methods: {
 
     validateFormInput: function () {
+      if (this.validateOnGoingProcess()) return
       var errors = {}
 
       if (!this.formData.secretTitle) { errors.Title = 'Cannot be empty.' }
@@ -98,10 +99,12 @@ export default {
     },
 
     sellItem: function (transactionParams) {
+      this.$store.dispatch('setLoading')
       this.marketContract.sellSecret(...transactionParams)
       .then(transaction => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
 
+        this.$store.dispatch('stopLoading')
         this.$store.dispatch(
           'refreshModal',
           {
@@ -124,6 +127,9 @@ export default {
       )
       .catch(
         err => window.alert(err)
+      )
+      .finally(
+        () => this.$store.dispatch('stopLoading')
       )
     },
 

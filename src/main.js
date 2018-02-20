@@ -27,7 +27,25 @@ window.addEventListener('load', function () {
       toWei: (input) => window.web3.toWei(input, 'ether'),
       fromWei: (input) => window.web3.fromWei(input, 'ether'),
       getBlockNumber: (callback) => window.web3.eth.getBlockNumber(callback),
-      getAccounts: (callback) => window.web3.eth.getAccounts(callback)
+      getAccounts: (callback) => window.web3.eth.getAccounts(callback),
+      validateOnGoingProcess: () => {
+        if (store.getters.processing) {
+          store.dispatch('refreshModal',
+            {
+              options: {
+                title: 'Action Error',
+                show: true,
+                selectable: false
+              },
+              data: {
+                message: `A transaction is already being processed.
+                Reject ongoing transaction on metamask before proceeding.`
+              }
+            }
+          )
+        }
+        return store.getters.processing
+      }
     }
   })
 

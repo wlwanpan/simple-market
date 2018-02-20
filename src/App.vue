@@ -5,7 +5,14 @@
     </info-modal>
 
     <div class="app-wrapper">
-      <h1 class="app-header"> Secret Market </h1>
+      <h1 class="app-header">
+        <div v-if="processing" class="process-loader">
+          Processing <span>.</span><span>.</span><span>.</span>
+        </div>
+        <div v-else>
+          Simple Market
+        </div>
+      </h1>
       <router-view></router-view>
     </div>
 
@@ -25,18 +32,14 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'app',
 
-  data () {
-    return {
-      modal: this.$store.state.modal
-    }
-  },
-
   computed: {
     ...mapGetters([
       'coinbaseAddress',
       'coinbaseBalance',
       'contractAddress',
-      'marketContract'
+      'marketContract',
+      'processing',
+      'modal'
     ])
   },
 
@@ -87,14 +90,6 @@ export default {
 
   },
 
-  watch: {
-
-    '$store.state.modal': function (modalData) {
-      this.modal = modalData
-    }
-
-  },
-
   components: {
     InfoModal
   }
@@ -103,6 +98,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+@keyframes blink {
+  50% { color: transparent }
+}
+.loader__dot { animation: 1s blink infinite }
+.loader__dot:nth-child(2) { animation-delay: 250ms }
+.loader__dot:nth-child(3) { animation-delay: 500ms }
 #app {
   // Global  Styles
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -122,6 +124,12 @@ export default {
     display: block;
     opacity: 0.8;
     font-size: 40px;
+
+    .process-loader {
+      span { animation: 1.5s blink infinite; }
+      span:nth-child(2) { animation-delay: 0.5s; }
+      span:nth-child(3) { animation-delay: 1s; }
+    }
   }
 
   .app-wrapper {

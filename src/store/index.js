@@ -6,6 +6,7 @@ const _ = require('underscore')
 
 const state = {
   contractAddress: '0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35',
+  processing: false,
   modal: {
     options: {
       show: false,
@@ -48,6 +49,10 @@ const mutations = {
 
   EMPTY_SECRET_STORE (state) {
     state.secrets = {}
+  },
+
+  UPDATE_PROCESSING_STATE (state, processingState) {
+    state.processing = processingState
   }
 
 }
@@ -127,6 +132,14 @@ const actions = {
         )
       }
     })
+  },
+
+  setLoading ({ commit }) {
+    commit('UPDATE_PROCESSING_STATE', true)
+  },
+
+  stopLoading ({ commit }) {
+    commit('UPDATE_PROCESSING_STATE', false)
   }
 
 }
@@ -139,7 +152,11 @@ const getters = {
 
   coinbaseBalance: state => state.coinbaseBalance,
 
+  processing: state => state.processing,
+
   secrets: state => state.secrets,
+
+  modal: state => state.modal,
 
   marketContract: state => window.marketContract.at(state.contractAddress),
 

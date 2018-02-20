@@ -63,6 +63,7 @@ export default {
   methods: {
 
     buySecret: function (e) {
+      if (this.validateOnGoingProcess()) return
       this.computedGasLimit(this.data.price)
       .then(
         gasLimit => this.buySecretCallback(
@@ -79,6 +80,7 @@ export default {
     },
 
     buySecretCallback: function (transactionParams) {
+      this.$store.dispatch('setLoading')
       this.marketContract.buySecret(...transactionParams)
       .then((transaction) => {
         var { gasUsed, cumulativeGasUsed, blockNumber, transactionHash } = transaction.receipt
@@ -104,11 +106,15 @@ export default {
       .then((transactionLogs) => {
         if (transactionLogs.length) {
           // Check for validity of secret and upate $store.
+          console.log(transactionLogs)
         }
       })
       .catch((err) => {
-        window.alert(err)
+        console.log(err)
       })
+      .finally(
+        () => this.$store.dispatch('stopLoading')
+      )
     }
   }
 }
