@@ -2,9 +2,7 @@
 
 Experimental Secret Market Dapp: https://simple-market.herokuapp.com
 
-The smart contract is currently deployed on the public ropsten testnet:
-
-- https://ropsten.etherscan.io/address/0xff34e514e58e6683d83892ecdfda52fd48321748
+The smart contract is currently deployed on the public ropsten testnet (https://ropsten.etherscan.io/address/0xff34e514e58e6683d83892ecdfda52fd48321748)
 
 1. Install metamask extension - https://metamask.io/
 2. Switch metamask network from "Main Ethereum Network" to "Ropsten Test Net"
