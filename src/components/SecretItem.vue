@@ -50,7 +50,6 @@ export default {
 
     rankClass: function () {
       var _rank = this.data.rank.toNumber()
-
       return {
         'good': _rank >= 7,
         'okay': _rank >= 4 && _rank < 7,
@@ -106,7 +105,8 @@ export default {
       .then((transactionLogs) => {
         if (transactionLogs.length) {
           // Check for validity of secret and upate $store.
-          console.log(transactionLogs)
+          var { _key, _buyer } = transactionLogs[0].args
+          this.$store.dispatch('updateSingleSecret', { key: _key, owner: _buyer })
         }
       })
       .catch((err) => {
@@ -128,7 +128,7 @@ export default {
 }
 
 .secret-rank {
-  display: inline-block; margin-right: 10px;
+  display: inline-block; margin-right: 10px; margin-top: 2.5px;
   width: 15px; height: 15px; float: left;
   border-radius: 50%;
   background: #ddd;

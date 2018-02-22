@@ -7,7 +7,7 @@ contract SimpleMarket {
     string title;
     string message;
     uint256 price;
-    uint256 rank; // to implement ranking system after
+    uint256 rank;
     address owner;
 
   }
@@ -43,17 +43,19 @@ contract SimpleMarket {
     /*
       Transfer ownership from seller to buyer
     */
-    var secret = storedSecrets[_key];
-    require(msg.value >= secret.price);
+    Secret storage secret = storedSecrets[_key];
+    require(msg.sender != 0x0);
     require(msg.sender != secret.owner);
+    require(msg.value == secret.price);
 
     secret.owner.transfer(msg.value);
     secret.owner = msg.sender;
+    secret.rank--;
 
     SecretBoughtEvent(secret.owner, _key);
   }
 
-  function revealSecret(bytes32 _key) public returns(string message, uint256 rank) {
+  function revealSecret(bytes32 _key) public view returns(string message, uint256 rank) {
     /*
       if caller is owner of secret, returns message
     */
@@ -61,7 +63,6 @@ contract SimpleMarket {
     var secret = storedSecrets[_key];
 
     if (secret.owner == msg.sender) {
-      secret.rank--;
       return (secret.message, secret.rank);
     }
     return ("This secret isnt yours", 0);
@@ -74,11 +75,7 @@ contract SimpleMarket {
     assert(_index >= 0 && _index < secretKeys.length);
 
     var _key = secretKeys[_index];
-    var secret = storedSecrets[_key];
-
-    /* if (secret.owner == msg.sender) {
-      owned = true;
-    } */
+    Secret memory secret = storedSecrets[_key];
 
     return (_key, secret.title, secret.price, secret.rank, secret.owner);
   }

@@ -7,7 +7,7 @@
     <div class="app-wrapper">
       <h1 class="app-header">
         <div v-if="processing" class="process-loader">
-          Processing <span>.</span><span>.</span><span>.</span>
+          Processing Tx<span>.</span><span>.</span><span>.</span>
         </div>
         <div v-else>
           Simple Market
@@ -44,7 +44,7 @@ export default {
   },
 
   mounted: function () {
-    this.initContactEventWatcher()
+    // this.initContactEventWatcher()
     this.$store.dispatch('refreshCoinbaseAddress')
   },
 
@@ -52,6 +52,7 @@ export default {
 
     initContactEventWatcher: function () {
       this.getBlockNumber((err, blockHeight) => {
+        // check block height
         console.log(blockHeight)
         if (err) window.alert(err)
 
@@ -102,9 +103,7 @@ export default {
 @keyframes blink {
   50% { color: transparent }
 }
-.loader__dot { animation: 1s blink infinite }
-.loader__dot:nth-child(2) { animation-delay: 250ms }
-.loader__dot:nth-child(3) { animation-delay: 500ms }
+
 #app {
   // Global  Styles
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

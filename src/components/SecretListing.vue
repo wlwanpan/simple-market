@@ -107,7 +107,7 @@ export default {
 
     revealSecretCallback: function (transactionParams) {
       this.marketContract.revealSecret.call(...transactionParams)
-      .then(([message, rank]) => {
+      .then(([message]) => {
         this.$store.dispatch(
           'refreshModal',
           {
@@ -153,10 +153,9 @@ export default {
   }
 
   &:hover {
-    background-color: white;
-    border-left: 1px solid #494e75; opacity: 1;
-    .secret-title, .secret-price {
-      opacity: 1;
+    background-color: #494e75;
+    .secret-title, .secret-price, a {
+      opacity: 1; color: white;
     }
   }
 }

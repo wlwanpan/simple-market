@@ -4,12 +4,12 @@
     <div class="dashboard-header">
       Each secret auctioned can be traded indefinetely at selling price.
       The latest buyer is able to reveal the secret and requires only the network gas price
-      to perform.
+      to perform. The color indicates the number of times the secret has been traded.
     </div>
 
     <div class="general-actions action-stack">
       <span class="left-action">
-        <a class="button right" @click.prevent="refreshCoinbaseAddress">Refresh Account</a>
+        <a class="button right" @click.prevent="refreshCoinbaseAddress">Refresh</a>
       </span>
       <span class="right-action">
         <router-link class="button left" to="/sell-secret">Sell Secret</router-link>
@@ -57,6 +57,7 @@ export default {
 
     refreshCoinbaseAddress: function (e) {
       this.$store.dispatch('refreshCoinbaseAddress')
+      this.$store.dispatch('refreshSecrets')
     }
 
   },

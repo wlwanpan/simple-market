@@ -3,7 +3,8 @@
 Experimental Secret Market Dapp: https://simple-market.herokuapp.com
 
 The smart contract is currently deployed on the public ropsten testnet:
-https://ropsten.etherscan.io/address/0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35
+
+- https://ropsten.etherscan.io/address/0xff34e514e58e6683d83892ecdfda52fd48321748
 
 1. Install metamask extension - https://metamask.io/
 2. Switch metamask network from "Main Ethereum Network" to "Ropsten Test Net"
@@ -17,7 +18,7 @@ Note: Still figuring out a way host the dapp via IPFS instead of heroku.
 - testrpc (https://www.npmjs.com/package/ethereumjs-testrpc)
 - Geth (https://github.com/ethereum/go-ethereum/wiki/geth)
 
-## 
+##
 
 Clone repo:
 ```
@@ -34,6 +35,11 @@ Start geth testrpc:
 testrpc --rpc
 ```
 
+Deploy a dummy contract:
+```
+truffle compile && truffle migrate
+```
+
 Serve frontend:
 ```
 npm run dev
@@ -46,4 +52,4 @@ geth attach http://127.0.0.1:8545/
 
 ## Contract Address
 
-0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35
+0xff34e514e58e6683d83892ecdfda52fd48321748

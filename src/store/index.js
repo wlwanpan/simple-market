@@ -5,7 +5,7 @@ Vue.use(Vuex)
 const _ = require('underscore')
 
 const state = {
-  contractAddress: '0x8b6302b8505d50ab32a4ecb8c27736b0cca33f35',
+  contractAddress: '0xff34e514e58e6683d83892ecdfda52fd48321748',
   processing: false,
   modal: {
     options: {
@@ -35,16 +35,20 @@ const mutations = {
 
   UPDATE_SECRET_STORE (state, data) {
     if (data.length === 0) return
+    var updatedSecrets = _(state.secrets).clone()
 
     _(data).each(
       ([key, title, price, rank, owner]) => {
         if (!_(state.secrets).has(key)) {
-          var oldSecrets = _(state.secrets).clone()
-          oldSecrets[key] = {title, price, rank, owner}
-          state.secrets = oldSecrets
+          updatedSecrets[key] = {title, price, rank, owner}
+        } else {
+          if (owner) { updatedSecrets[key].owner = owner }
+          if (rank) { updatedSecrets[key].rank = rank }
         }
       }
     )
+
+    state.secrets = updatedSecrets
   },
 
   EMPTY_SECRET_STORE (state) {
@@ -85,6 +89,10 @@ const actions = {
         commit('UPDATE_SECRET_STORE', secrets)
       })
     })
+  },
+
+  updateSingleSecret ({ commit }, { key, owner, rank }) {
+    commit('UPDATE_SECRET_STORE', [[key, undefined, undefined, rank, owner]])
   },
 
   refreshSecrets ({ dispatch, commit }) {
