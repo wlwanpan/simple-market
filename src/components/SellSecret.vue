@@ -121,10 +121,14 @@ export default {
             }
           }
         )
+        return transaction.logs
       })
-      .then(
-        secretKey => this.resetFormData()
-      )
+      .then(transactionLogs => {
+        if (transactionLogs.length && transactionLogs[0].event === 'SecretAddedEvent') {
+          this.$store.dispatch('addSingleSecret', transactionLogs[0].args)
+        }
+        this.resetFormData()
+      })
       .catch(
         err => window.alert(err)
       )

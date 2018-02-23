@@ -44,16 +44,15 @@ export default {
   },
 
   mounted: function () {
-    // this.initContactEventWatcher()
     this.$store.dispatch('refreshCoinbaseAddress')
+    this.initContactEventWatcher()
   },
 
   methods: {
 
     initContactEventWatcher: function () {
       this.getBlockNumber((err, blockHeight) => {
-        // check block height
-        console.log(blockHeight)
+        console.log('Chain currently at: ' + blockHeight)
         if (err) window.alert(err)
 
         this.marketContract.SecretBoughtEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
@@ -66,11 +65,10 @@ export default {
 
         this.marketContract.SecretAddedEvent({}, { fromBlock: blockHeight, toBlock: 'latest' })
         .watch((err, result) => {
-          if (err) window.alert(err)
-          // var { key, title, price, rank, owned } = result.args
-          // [[key, title, price, rank, owned]]
-          console.log('from added event')
-          console.log(result.args)
+          if (err) console.log(err)
+          if (result.event === 'SecretAddedEvent' && result.type === 'mined') {
+            this.$store.dispatch('addSingleSecret', result.args)
+          }
         })
       })
     },

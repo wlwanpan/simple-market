@@ -95,6 +95,10 @@ const actions = {
     commit('UPDATE_SECRET_STORE', [[key, undefined, undefined, rank, owner]])
   },
 
+  addSingleSecret ({ commit }, { key, title, price, rank, owner }) {
+    commit('UPDATE_SECRET_STORE', [[key, title, price, rank, owner]])
+  },
+
   refreshSecrets ({ dispatch, commit }) {
     commit('EMPTY_SECRET_STORE')
     dispatch('loadSecrets')
@@ -117,13 +121,19 @@ const actions = {
   },
 
   refreshCoinbaseAddress ({ commit, dispatch }) {
-    window.web3.eth.getAccounts((err, result) => {
-      if (err) window.alert(err)
-
-      if (result.length) {
-        console.log('Logged in as:' + result)
-        commit('SET_COINBASE_ADDRESS', result[0])
-      } else {
+    new Promise((resolve, reject) => {
+      window.web3.eth.getAccounts((err, result) => {
+        if (err || !result.length) reject(err)
+        else {
+          console.log('Logged in as:' + result)
+          commit('SET_COINBASE_ADDRESS', result[0])
+          resolve()
+        }
+      })
+    })
+    .catch(
+      err => {
+        console.log(err)
         dispatch(
           'refreshModal',
           {
@@ -133,13 +143,13 @@ const actions = {
               selectable: false
             },
             data: {
-              MetamaskError: 'Your account might be locked. Unlock it to proceed',
+              MetamaskError: 'No Metamask Account installed/detected',
               LocalNodeError: 'No local geth testrpc running on port: 8545'
             }
           }
         )
       }
-    })
+    )
   },
 
   setLoading ({ commit }) {
