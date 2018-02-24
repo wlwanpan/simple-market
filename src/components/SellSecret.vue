@@ -7,7 +7,7 @@
       until it has been revealed at least 10 times.
     </div>
 
-    <router-link class="button back-btn" to="/">Back</router-link>
+    <router-link class="button back-btn bottom" to="/">Back</router-link>
 
     <form @submit.prevent="validateFormInput">
 
@@ -26,7 +26,7 @@
         <textarea maxlength="155" v-model="formData.secretMessage" placeholder="Secret message you want to auction"></textarea>
       </div>
 
-      <button class="button sell-btn" type="submit">SELL</button>
+      <button class="button sell-btn top" type="submit">SELL</button>
 
     </form>
 
@@ -162,26 +162,26 @@ export default {
 }
 
 .form-group {
-  padding: 10px;
+  padding: 15px 10px;
   .form-label {
-    width: 70%; margin: 0 auto; text-align: left;
+    width: 80%; margin: 0 auto; text-align: left;
     font-size: 20px; font-weight: 500;
     opacity: 0.7;
   }
 }
 
 .back-btn {
-  display: inline-block; width: 62%; font-size: 15px;
+  display: inline-block; width: 74%; font-size: 15px;
   margin-bottom: 15px; margin-top: 7px;
 }
 
 .sell-btn {
-  width: 70%; font-size: 15px;
+  width: 80%; font-size: 15px;
   margin-top: 15px;
 }
 
 input, textarea {
-  width: 70%;
+  width: 80%;
 }
 
 </style>

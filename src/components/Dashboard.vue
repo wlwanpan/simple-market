@@ -91,7 +91,4 @@ export default {
   margin-top: 25px;
 }
 
-.secret-listing-wrapper {
-}
-
 </style>

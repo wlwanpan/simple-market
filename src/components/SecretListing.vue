@@ -2,7 +2,7 @@
   <div class="secret-listing">
 
     <div class="secret-listing-actions">
-      <input class="search-field" v-model="searchText" placeholder="Search by secret title">
+      <input class="search-field" v-model="searchText" placeholder="Search by Secret Title">
       <div class="button left" @click.prevent="toggleShowOwnedFilter">
         <span v-if="showOwnedFilterOn">Show All</span>
         <span v-else>Show Owned</span>
@@ -143,7 +143,7 @@ export default {
 }
 
 #secret-list > li {
-  width: 70%; max-width: 600px;
+  width: 90%;
   margin: 0 auto; margin-bottom: 10px;
   background-color: rgba(15, 15, 15, 0.015);
   border-radius: 5px; border: 1px solid transparent;
@@ -168,8 +168,10 @@ export default {
   margin-bottom: 20px;
 }
 
-input, textarea {
-  width: 40%; max-width: 400px;
+.secret-listing-actions {
+  input, textarea {
+    width: 60%; max-width: 400px;
+  }
 }
 
 </style>

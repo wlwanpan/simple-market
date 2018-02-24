@@ -7,7 +7,7 @@
     <div class="app-wrapper">
       <h1 class="app-header">
         <div v-if="processing" class="process-loader">
-          Processing Tx<span>.</span><span>.</span><span>.</span>
+          Processing <span>.</span><span>.</span><span>.</span>
         </div>
         <div v-else>
           Simple Market
@@ -18,7 +18,8 @@
 
     <div class="app-footer">
       <div class="contract-address-footer">
-        <strong>Contract Address:</strong> {{ contractAddress }}
+        <strong>Contract Address:</strong>
+        {{ contractAddress }}
       </div>
     </div>
 
@@ -115,8 +116,8 @@ export default {
 
   .app-header {
     border-bottom: 1px solid #ddd;
+    margin-bottom: 25px; margin-top: 0;
     padding: 15px;
-    margin: 15px 15%;
     font-weight: bold;
     display: block;
     opacity: 0.8;
@@ -130,13 +131,13 @@ export default {
   }
 
   .app-wrapper {
-    width: 70%; margin: 0 auto;
+    margin: 0 auto; max-width: 620px;
   }
 
   .app-footer {
-    margin: 0 auto; width: 70%;
+    margin: 0 auto; width: 620px;
     .contract-address-footer {
-      padding: 15px 15px 10px 15px; margin: 15px 15%;
+      padding-top: 15px; padding-bottom: 15px;
       border-top: 1px solid #ddd;
     }
   }
@@ -157,6 +158,8 @@ export default {
     transition: all 0.3;
 
     &.left { border-radius: 0 5px 5px 0; }
+    &.bottom { border-radius: 5px 5px 0 0; }
+    &.top { border-radius: 0 0 5px 5px; }
     &.right { border-radius: 5px 0 0 5px; }
     &:focus { outline: none; }
     &:hover { background-color: #494e75; color: #fff; }
