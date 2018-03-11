@@ -7,7 +7,7 @@
       until it has been revealed at least 10 times.
     </div>
 
-    <router-link class="button back-btn bottom" to="/">Back</router-link>
+    <router-link class="button back-btn bottom" to="/">BACK</router-link>
 
     <form @submit.prevent="validateFormInput">
 
@@ -69,7 +69,7 @@ export default {
       if (!this.formData.secretMessage) { errors.Message = 'Cannot be empty.' }
 
       if (_(errors).isEmpty()) {
-        this.computedGasLimit('default')
+        this.computedGasLimit()
         .then(
           gasLimit => this.sellItem(
             [

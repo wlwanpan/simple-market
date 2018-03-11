@@ -188,11 +188,11 @@ const getters = {
         {
           from: state.coinbaseAddress,
           to: state.contractAddress,
-          amount: amountInWei
+          amount: amountInWei || 0
         },
         (err, result) => {
           if (err || !result) resolve(defaultGasLimit)
-          else resolve(result)
+          else resolve(result/2)
         }
       )
     })
